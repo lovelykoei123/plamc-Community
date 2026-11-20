@@ -118,11 +118,11 @@
 
 | 项目 | 说明 |
 |---|---|
-| [PokeLDN](https://github.com/Decryptu/pokeldn) | Switch 端的插件平台（overlay），在主机上直接读存档、看种子、刷闪 |
-| [PokeLDN 简体中文插件包](https://github.com/easyworld/pokeldn/tree/codex/zh-hans-pack) | 给 PokeLDN 用的中文化插件，装完界面变中文 |
-| [PLA MMO Seed Finder](https://github.com/Yuutalin/PLA-MMO-Seed-Finder) | 在 PokeLDN 上算「大量出现」种子的插件。算完会把最新种子写到 `%APPDATA%\pokeldn\plugin-data\junli-pla-mmo-seed\latest_seed.txt`，本工具的「导入」按钮读的就是这个文件 |
+| [PokeLDN](https://github.com/Decryptu/pokeldn) | 电脑端的联机工具（Windows / macOS / Linux，另有 Android、iOS 版）：用一块 ESP32 板当无线电台，走 Switch 的本地联机（LDN / Pia）跟正版游戏交换宝可梦、收发神秘礼物、开团体战。**不需要破解主机**，Switch 上什么都不用装，只要一份 `prod.keys`；支持插件（`.pokeplugin`） |
+| [PokeLDN 简体中文语言包](https://github.com/easyworld/pokeldn/tree/codex/zh-hans-pack) | 第三方语言插件 `community-zh-hans`：把 PokeLDN 的界面文案、工具说明和文档翻成简体中文。从 Release 下载 `.pokeplugin`，在 Plugins 页安装，再到 Settings → App language 选「简体中文」并重启 |
+| [PLA MMO Seed Finder](https://github.com/Yuutalin/PLA-MMO-Seed-Finder) | PokeLDN 的插件（ID `junli-pla-mmo-seed`）：凑齐同一 MMO 群体四只「最初捕获」宝可梦的交换确认记录后，调用 EtumrepMMO 反推群体 Seed。算完把种子写到 `%APPDATA%\pokeldn\plugin-data\junli-pla-mmo-seed\latest_seed.txt`——本工具的「导入」按钮读的就是这个文件 |
 
-典型流程：Switch 上装好 PokeLDN + 汉化包 + MMO 种子插件，插件算完种子 → 电脑上打开本工具，点种子栏左边的「导入」→ 直接开始筛选。
+典型流程：电脑装好 PokeLDN（可以再装中文语言包）→ 在 Plugins 页装 MMO 种子插件、备好 EtumrepMMO（需 .NET 8 与 VC++ 运行库）→ Switch 上开游戏，跟电脑配对采集四只的记录 → 插件算出群体 Seed → 打开本工具点「导入」，直接开始筛选。
 
 ---
 
