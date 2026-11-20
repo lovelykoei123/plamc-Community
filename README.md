@@ -40,7 +40,7 @@
 | 字段 | 说明 |
 |---|---|
 | `IP` | Switch 的局域网 IP，默认 `192.168.1.110`。只有「读存档」「传送」「实时读取游戏」这类功能才需要 |
-| `USB` | `true` 用 USB 线连接（需 usb-botbase），`false` 用 Wi-Fi |
+| `USB` | `true` 用 USB 线连接，`false` 用 Wi-Fi |
 | `SeedCheckOnly` | `true` = 纯种子模式，启动时完全不连 Switch，只算种子（此模式下「大量出现」检查器和时空扭曲检查器不可用） |
 | `FILTER_ON_SERVER` | 保持 `true` |
 
@@ -50,37 +50,11 @@
 
 ## 运行环境
 
-### 普通用户（只用 exe）
-
 - **Windows 10 / 11，64 位**
 - **WebView2 运行时**：Win11 自带；Win10 如果没装过，[下载安装](https://developer.microsoft.com/microsoft-edge/webview2/) 即可（装过 Edge 的机器一般已经有）
 - 不需要 Python、不需要 Node、不需要联网
-- 想用「读取游戏存档 / 传送 / 实时读当前大量出现」这些功能，才需要 Switch 侧环境：
-  - 已破解（CFW）的 Switch
-  - [sys-botbase](https://github.com/olliz0r/sys-botbase)（用 USB 的话换成 usb-botbase）
-  - 建议装 [ldn_mitm](https://github.com/spacemeowx2/ldn_mitm)：避免开游戏后 Switch 掉 Wi-Fi，连接更稳
 
 纯算种子（大量出现种子检查、单只生成、多只生成、BDSP、Gen3）**完全不需要 Switch**。
-
-### 开发者（跑源码 / 自行打包）
-
-- **Python 3.12**
-- 依赖：`pip install -r requirements.txt`（Flask 3.1.0、pyusb、z3、flatbuffers、platformdirs 等）
-- 核心计算库要单独装，且必须带 numba 额外依赖：
-  - GitHub：`pip install "numba-pokemon-prngs[numba] @ git+https://github.com/Lincoln-LM/numba_pokemon_prngs"`
-  - Gitee 镜像：`pip install "numba-pokemon-prngs[numba] @ git+https://gitee.com/fifamvp/numba_pokemon_prngs"`
-- 起服务（源码方式）：
-
-  ```bash
-  pip install -r requirements.txt
-  cp config.template.json config.json     # 按需改 IP / SeedCheckOnly
-  python run.py                           # 浏览器打开 http://127.0.0.1:8200/
-  ```
-
-  > `main.py` 和 `运行.bat` 是上游遗留文件：`main.py` 内部是相对导入，直接运行会报错；`运行.bat` 依赖文件夹名，遇到带横杠的目录也会失败。请用 `run.py`，它按路径把当前目录当作 `plachecker` 包加载，跟目录名无关。
-
-- 打包 exe：PyInstaller（onefile）+ pywebview（WebView2 后端）。
-  打包时要一并收集 `numba_pokemon_prngs` 的数据文件和 `z3` 的 `libz3.dll`，否则剑 / 盾大地图和部分求解功能会缺件。
 
 ---
 
