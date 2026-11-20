@@ -18,7 +18,7 @@
 
 > 附件名是英文：GitHub 会把中文附件名过滤成乱码，所以统一用 ASCII。下载后自己改名成 `RNG查闪工具-v1.1.4.exe` 一样能跑。
 
-`config.json` 不用下载，程序内置了默认配置；只有要连 Switch 时，才需要按下面「配置」自己建一份放在 exe 旁边。
+`config.json` 不用下载，程序内置了默认配置；只有要连 Switch 时，才需要按下文「CFW 配置」自己建一份放在 exe 旁边。
 
 ---
 
@@ -33,34 +33,16 @@
 
 出问题时看 exe 旁边的 `运行日志.txt`，里面写了具体原因。
 
-### 配置（可选）
-
-在 exe 旁边放一份 `config.json`（名字照抄，格式见仓库里的 `config.template.json`），改完保存、重启 exe 生效。程序只读不写。
-
-| 字段 | 说明 |
-|---|---|
-| `IP` | Switch 的局域网 IP，默认 `192.168.1.110`。只有「读存档」「传送」「实时读取游戏」这类功能才需要 |
-| `USB` | `true` 用 USB 线连接（需 usb-botbase），`false` 用 Wi-Fi |
-| `SeedCheckOnly` | `true` = 纯种子模式，启动时完全不连 Switch，只算种子（此模式下「大量出现」检查器和时空扭曲检查器不可用） |
-| `FILTER_ON_SERVER` | 保持 `true` |
-
-`config.json` 丢了也能照常启动，程序会退回内置默认值。
-
 ---
 
 ## 运行环境
 
-### 普通用户（只用 exe）
-
 - **Windows 10 / 11，64 位**
 - **WebView2 运行时**：Win11 自带；Win10 如果没装过，[下载安装](https://developer.microsoft.com/microsoft-edge/webview2/) 即可（装过 Edge 的机器一般已经有）
 - 不需要 Python、不需要 Node、不需要联网
-- 想用「读取游戏存档 / 传送 / 实时读当前大量出现」这些功能，才需要 Switch 侧环境：
-  - 已破解（CFW）的 Switch
-  - [sys-botbase](https://github.com/olliz0r/sys-botbase)（用 USB 的话换成 usb-botbase）
-  - 建议装 [ldn_mitm](https://github.com/spacemeowx2/ldn_mitm)：避免开游戏后 Switch 掉 Wi-Fi，连接更稳
 
 纯算种子（大量出现种子检查、单只生成、多只生成、BDSP、Gen3）**完全不需要 Switch**。
+要用「读取游戏存档 / 传送 / 实时读当前大量出现」这类要连 Switch 的功能，看下面「CFW 配置」。
 
 ### 开发者（跑源码 / 自行打包）
 
@@ -83,6 +65,32 @@
   打包时要一并收集 `numba_pokemon_prngs` 的数据文件和 `z3` 的 `libz3.dll`，否则剑 / 盾大地图和部分求解功能会缺件。
 
 ---
+
+## CFW 配置（进阶，可选）
+
+> **普通用户用不到这一节。** 纯算种子不需要 Switch；只有要用「读取游戏存档 / 传送 / 实时读当前大量出现」这些必须连主机才能用的功能，才需要往下配。
+
+### Switch 侧环境
+
+- 已破解（CFW）的 Switch
+- [sys-botbase](https://github.com/olliz0r/sys-botbase)（用 USB 的话换成 usb-botbase）
+- 建议装 [ldn_mitm](https://github.com/spacemeowx2/ldn_mitm)：避免开游戏后 Switch 掉 Wi-Fi，连接更稳
+
+### config.json
+
+在 exe 旁边放一份 `config.json`（名字照抄，格式见仓库里的 `config.template.json`），改完保存、重启 exe 生效。程序只读不写。
+
+| 字段 | 说明 |
+|---|---|
+| `IP` | Switch 的局域网 IP，默认 `192.168.1.110`。只有「读存档」「传送」「实时读取游戏」这类功能才需要 |
+| `USB` | `true` 用 USB 线连接（需 usb-botbase），`false` 用 Wi-Fi |
+| `SeedCheckOnly` | `true` = 纯种子模式，启动时完全不连 Switch，只算种子（此模式下「大量出现」检查器和时空扭曲检查器不可用） |
+| `FILTER_ON_SERVER` | 保持 `true` |
+
+`config.json` 丢了也能照常启动，程序会退回内置默认值。
+
+---
+
 
 ## 功能
 
