@@ -1,5 +1,5 @@
 import numpy as np
-RESOURCE_PATH = './static/'
+from ...app import RESOURCE_PATH
 from enum import Enum
 import struct
 import bz2

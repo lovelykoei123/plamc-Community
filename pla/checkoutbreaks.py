@@ -1,9 +1,9 @@
 import struct
-from pla.core import BASE_ROLLS_OUTBREAKS, generate_from_seed, get_rolls, get_sprite
-from pla.data import pokedex, natures
-from pla.rng import XOROSHIRO
+from .core import BASE_ROLLS_OUTBREAKS, generate_from_seed, get_rolls, get_sprite
+from .data import pokedex, natures
+from .rng import XOROSHIRO
 
-from pla.checkmmo import MAX_MAPS, get_group_seed
+from .checkmmo import MAX_MAPS, get_group_seed, get_gen_seed_to_group_seed
 
 def get_all_outbreaks(reader, research, inmap, rolls_override = None):
     """reads all normal outbreaks on map"""
@@ -173,8 +173,4 @@ def get_outbreak_info(reader, group_id, inmap):
     }
 
     return pokedex.entry_by_index(species_index), group_seed, max_spawns, coordinates
-
-def get_gen_seed_to_group_seed(reader,group_id):
-    gen_seed = reader.read_pointer_int(f"[[[[[[main+42EEEE8]+78]+" \
-                                       f"{0xD48 + 0x8*group_id:X}]+58]+38]+478]+20", 8)
-    return (gen_seed - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF
+    

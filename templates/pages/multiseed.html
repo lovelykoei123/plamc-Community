@@ -1,24 +1,20 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}Multi Seed Checker{% endblock %}
+{% block title %}多只生成种子检查{% endblock %}
 
 {% block head %}
 	<script type="module" src="static/js/jquery.min.mjs"></script>
 	<script type="module">
 	$(document).ready(function(e){
-		console.log("ready!")
+		var zhg = window.zhGroup || function (s) { return s; };
 
 		function get_json_data(id, parent_id) {
-			console.log('#' + id)
 			var html_code = '';
 			$.getJSON('static/resources/groupids.json', function(data) {
-				console.log(id)
-				html_code += '<option value="49">Select Spawner:</option>';
+				html_code += '<option value="49">选择生成点：</option>';
 				$.each(data, function(key, value) {
-					console.log("Value.parent_id");
-					console.log(value.parent_id);
 					if (value.parent_id == parent_id) {
-						html_code += '<option value="' + value.id + '">' + value.name + '</option>';
+						html_code += '<option value="' + value.id + '">' + zhg(value.name) + '</option>';
 					}
 				});
 				$('#' + id).html(html_code);
@@ -28,6 +24,7 @@
 		get_json_data('groupID',0);
 	});
 	</script>
+	<script type="module" src="{{ url_for('static', filename='js/modules/zh-names.mjs') }}"></script>
 {% endblock %}
 
 {% block main %}
@@ -35,21 +32,21 @@
     <div data-pla-messages></div>
 	
     <div class="tab">
-		<button class="tablinks" id="defaultOpen" data-pla-tab-for="Results">Results</button>
-		<button class="tablinks" data-pla-tab-for="Maps">Spawner Maps</button>
+		<button class="tablinks" id="defaultOpen" data-pla-tab-for="Results">结果</button>
+		<button class="tablinks" data-pla-tab-for="Maps">生成点地图</button>
 	</div>
 	
 	<div id="Results" class="tabcontent">
         <div class="pla-results" data-pla-results>
-            Search to begin
+            点击左侧按钮开始搜索
         </div>
 	</div>
 	
 	<div id="Maps" class="tabcontent">
 		<section class="pla-section-spawnmap">
-		    <h3>Currently Supported Spawnpoints:</h3>
+		    <h3>目前已支持的生成点：</h3>
 		
-			<button type="button" class="pla-button expandable-control">Obsidian Fieldlands</button>
+			<button type="button" class="pla-button expandable-control">黑曜原野</button>
 			<div class="expandable">
 			<ul class="pla-results-ul">
 				<li><img src="static/img/spawnpoint-eevee.png"></li>
@@ -69,10 +66,19 @@
 			</ul>
 			<ul class="pla-results-ul">
 				<li><img src="static/img/spawnpoint-pichu.png"></li>
+				<li><img src="static/img/spawnpoint-starly.png"></li>
+			</ul>
+			<ul class="pla-results-ul">
+				<li><img src="static/img/spawnpoint-aipom.png"></li>
+				<li><img src="static/img/spawnpoint-luxray.png"></li>
+			</ul>
+			<ul class="pla-results-ul">
+				<li><img src="static/img/spawnpoint-staraptor.png"></li>
+				<li><img src="static/img/spawnpoint-beautifly.png"></li>
 			</ul>
 			</div>
 			
-			<button type="button" class="pla-button expandable-control">Crimson Mirelands</button>
+			<button type="button" class="pla-button expandable-control">红莲湿地</button>
 			<div class="expandable">
 			<ul class="pla-results-ul">
 				<li><img src="static/img/spawnpoint-combee.png"></li>
@@ -80,20 +86,45 @@
 			</ul>
 			<ul class="pla-results-ul">
 				<li><img src="static/img/spawnpoint-budew.png"></li>
+				<li><img src="static/img/spawnpoint-croagunk.png"></li>
+			</ul>
+			<ul class="pla-results-ul">
+				<li><img src="static/img/spawnpoint-hippopotas.png"></li>
+				<li><img src="static/img/spawnpoint-kricketune.png"></li>
+			</ul>
+			<ul class="pla-results-ul">
+				<li><img src="static/img/spawnpoint-paras.png"></li>
 			</ul>
 			</div>
 			
-			<button type="button" class="pla-button expandable-control">Cobalt Coastlands</button>
+			<button type="button" class="pla-button expandable-control">群青海岸</button>
 			<div class="expandable">
 			<ul class="pla-results-ul">
 				<li><img src="static/img/spawnpoint-basculin.png"></li>
+				<li><img src="static/img/spawnpoint-glameow.png"></li>
+			</ul>
+			<ul class="pla-results-ul">
+				<li><img src="static/img/spawnpoint-murkrow.png"></li>
+				<li><img src="static/img/spawnpoint-qwilfish.png"></li>
+			</ul>
+			<ul class="pla-results-ul">
+				<li><img src="static/img/spawnpoint-tentacool.png"></li>
+				<li><img src="static/img/spawnpoint-tentacool-2.png"></li>
 			</ul>
 			</div>
 			
-			<button type="button" class="pla-button expandable-control">Alabaster Icelands</button>
+			<button type="button" class="pla-button expandable-control">天冠山麓</button>
+			<div class="expandable">
+			<ul class="pla-results-ul">
+				<li><img src="static/img/spawnpoint-teddiursa.png"></li>
+			</ul>
+			</div>
+			
+			<button type="button" class="pla-button expandable-control">纯白冻土</button>
 			<div class="expandable">
                 <ul class="pla-results-ul">
                     <li><img src="static/img/spawnpoint-swinub.png"></li>
+					<li><img src="static/img/spawnpoint-rufflet.png"></li>
                 </ul>
 			</div>
 		</section>
@@ -104,23 +135,29 @@
 {% block sidebar %}
     <section class="pla-section-options">
 		<div class="pla-control">
-            <label for="inputseed">Seed</label>
-            <input type="number" id="inputseed" placeholder="Input Seed">
+            <label for="inputseed">种子</label>
+            <div class="pla-seed-row">
+                <button type="button" class="pla-button pla-seed-import"
+                        data-import-seed
+                        title="从 pokeldn 插件 junli-pla-mmo-seed 的 latest_seed.txt 读取最新种子">导入</button>
+                <input type="number" id="inputseed" placeholder="输入种子">
+            </div>
         </div>
 		
         <div class="pla-control">
-            <label for="maxDepth">Max Number of Advances:</label>
+            <label for="maxDepth">最大刷新次数：</label>
             <select id="maxDepth">
                 <option value="5">5</option>
                 <option value="9">9</option>
                 <option value="12">12</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+				<option value="18">18</option>
             </select>
         </div>
 		
 		<div class="pla-control">
-			<label for="maxAlive">Number of Spawns:</label>
+			<label for="maxAlive">同时生成数量：</label>
 			<select id="maxAlive">
 				<option value="2">2</option>
 				<option value="3">3</option>
@@ -128,43 +165,66 @@
 		</div>
 		
 		<div class="pla-control">
-			<label for="groupID">Select Spawner:</label>
+			<label for="groupID">选择生成点：</label>
 			<select name="groupID" id="groupID" class="form-control">
-				<option value="49">Select Spawn Point</option>
+				<option value="49">选择生成点</option>
 			</select>
 		</div>
 		
 		<div class="pla-control-spaced">
-			<label for="nightToggle">Check Night Spawns:</label>
+			<label for="nightToggle">检查夜间生成：</label>
 			<input type="checkbox" id="nightToggle">
+		</div>
+		
+		<div class="pla-control">
+			<label for="selectfilter">筛选条件：</label>
+			<select id="selectfilter">
+				<option value="is_shiny">仅闪光</option>
+				<option value="is_square_shiny">仅方块闪光</option>
+				<option value="is_alpha">仅头目</option>
+				<option value="is_perfect">仅 6V</option>
+				<option value="has_5ivs">5V 及以上</option>
+				<option value="no_attack">0 攻击个体</option>
+				<option value="has_no_attack_5iv_over_30">0 攻击 + 5V（30 以上）</option>
+				<option value="has_no_attack_5iv">0 攻击 + 5V</option>
+				<option value="no_speed">0 速度个体</option>
+				<option value="has_no_speed_5iv_over_30">0 速度 + 5V（30 以上）</option>
+				<option value="has_no_speed_5iv">0 速度 + 5V</option>
+				<option value="has_6iv_over_30">6 项 30 以上</option>
+				<option value="has_5iv_over_30">5 项 30 以上</option>
+				<option value="has_no_speed_no_attack">0 速度 + 0 攻击</option>
+				<option value="has_no_speed_no_attack_4iv_over_30">0 速度 + 0 攻击，4V（30 以上）</option>
+				<option value="has_no_speed_no_attack_4iv">0 速度 + 0 攻击，4V</option>
+			</select>
 		</div>
         
         <div class="pla-control-actions">
-            <button class="pla-button pla-button-action" id="pla-button-checkmultiseed">Check Multi Spawner</button>
+            <button class="pla-button pla-button-action" id="pla-button-checkmultiseed">按种子检查多只生成</button>
         </div>
     </section>
 
 	<section>
-        <div class="pla-control-spaced">
-            <label for="mmoShinyFilter">Shiny or Alpha</label>
+        <!--<div class="pla-control-spaced">
+            <label for="mmoShinyFilter">闪光或头目</label>
             <input type="checkbox" id="mmoShinyOrAlphaFilter">
-        </div>
+        </div>-->
+		
 
         <div class="pla-control-spaced">
-            <label for="mmoShinyFilter">Shiny Only</label>
+            <label for="mmoShinyFilter">结果筛选：仅闪光</label>
             <input type="checkbox" id="mmoShinyFilter">
         </div>
 
         <div class="pla-control-spaced">
-            <label for="mmoAlphaFilter">Alpha Only</label>
+            <label for="mmoAlphaFilter">结果筛选：仅头目</label>
             <input type="checkbox" id="mmoAlphaFilter">
         </div>
         
-        <div class="pla-control">
-            <label for="mmoSpeciesFilter">Species Filter:</label>
+        <!--<div class="pla-control">
+            <label for="mmoSpeciesFilter">物种筛选：</label>
             <input type="text" id="mmoSpeciesFilter">
-        </div>
-	</section>
+        </div>-->
+    </section>
 {% endblock %}
 
 {% block templates %}
@@ -176,8 +236,8 @@
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Shiny:</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
-                <li><span class="pla-results-label">Alpha:</span> <span data-pla-results-alpha></span></li>
+                <li><span class="pla-results-label">闪光：</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
+                <li><span class="pla-results-label">头目：</span> <span data-pla-results-alpha></span></li>
             </ul>
 
             <ul class="pla-results-ul">
@@ -185,22 +245,22 @@
             </ul>
             
 			<ul class="pla-results-ul">
-				<li><span class="pla-results-label">Advances:</span> <span data-pla-results-adv></span></li>
+				<li><span class="pla-results-label">帧数：</span> <span data-pla-results-adv></span></li>
 			</ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Nature:</span> <span data-pla-results-nature></span></li>
-                <li><span class="pla-results-label">Gender:</span> <span data-pla-results-gender></span></li>
-                <li><span class="pla-results-label">Rolls:</span> <span data-pla-results-rolls></span></li>
+                <li><span class="pla-results-label">性格：</span> <span data-pla-results-nature></span></li>
+                <li><span class="pla-results-label">性别：</span> <span data-pla-results-gender></span></li>
+                <li><span class="pla-results-label">判定次数：</span> <span data-pla-results-rolls></span></li>
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">EC:</span> <span data-pla-results-ec></span></li>
-                <li><span class="pla-results-label">PID:</span> <span data-pla-results-pid></span></li>
+                <li><span class="pla-results-label">EC：</span> <span data-pla-results-ec></span></li>
+                <li><span class="pla-results-label">PID：</span> <span data-pla-results-pid></span></li>
             </ul>
 
             <div class="pla-results-ivs-container">
-                <span class="pla-results-label">IVs:</span>
+                <span class="pla-results-label">个体值：</span>
                 <ul class="pla-results-ivs">
                     <li class="pla-results-ivs-hp" data-pla-results-ivs-hp></li>
                     <li class="pla-results-ivs-att" data-pla-results-ivs-att></li>
@@ -217,5 +277,6 @@
 {% endblock %}
 
 {% block script %}
+    <script type="module" src="{{ url_for('static', filename='js/import-seed.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/multiseed.js') }}"></script>
 {% endblock %}

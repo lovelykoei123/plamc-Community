@@ -1,13 +1,12 @@
-from numpy import true_divide
-from pla.rng import XOROSHIRO,OverworldRNG,Filter
-from app import RESOURCE_PATH
-from pla.data import natures
+from ..pla.rng import XOROSHIRO,OverworldRNG,Filter
+from ..app import RESOURCE_PATH
+from ..pla.data import natures
 import json
 
-from pla.rng.owrng import OverworldState
+from ..pla.rng.owrng import OverworldState
 
-encounters = json.load(open("./static/resources/SWSH_Encounters.json"))
-personal = json.load(open("./static/resources/SWSH_Personal.json"))
+encounters = json.load(open(RESOURCE_PATH + "resources/SWSH_Encounters.json"))
+personal = json.load(open(RESOURCE_PATH + "resources/SWSH_Personal.json"))
 
 with open(RESOURCE_PATH + "resources/text_species_en.txt",encoding="utf-8") as text_species:
     SPECIES = text_species.read().split("\n")

@@ -1,12 +1,11 @@
-'''
 import json
 import struct
 import sys
 from .bdsp_ug_generator_py import generate_results, FilterPy
-from app import RESOURCE_PATH
-from pla.data import natures
-from pla.core import get_bdsp_sprite
-from bdsp.filters import compare_all_ivs
+from ..app import RESOURCE_PATH
+from ..pla.data import natures
+from ..pla.core import get_bdsp_sprite
+from .filters import compare_all_ivs
 
 with open(RESOURCE_PATH + "resources/text_species_en.txt",encoding="utf-8") as text_species:
     SPECIES = text_species.read().split("\n")
@@ -52,7 +51,7 @@ def check_ug_advance(s0,s1,s2,s3,story_flag,room,version,advances,minadvances,di
                     "shiny": mon.shiny,
                     "sprite": get_bdsp_sprite(mon.species, mon.shiny),
                     "spawn": f"Spawn {z+1}",
-                    "advances": advance - delay,
+                    "advances": advance-delay,
                     "rarespawn": False
                 }
                 if compare_all_ivs(ivfilter['minivs'], ivfilter['maxivs'], monster['ivs']):
@@ -70,7 +69,7 @@ def check_ug_advance(s0,s1,s2,s3,story_flag,room,version,advances,minadvances,di
                     "shiny": rare.shiny,
                     "sprite": get_bdsp_sprite(rare.species, rare.shiny),
                     "spawn": "Rare",
-                    "advances": advance - delay,
+                    "advances": advance-delay,
                     "rarespawn": True
                 }
                 if compare_all_ivs(ivfilter['minivs'], ivfilter['maxivs'], monster['ivs']):
@@ -85,4 +84,3 @@ if __name__ == "__main__":
 
     #10000, 0x0cf67c48, 0x52b2e5cd, 0x1dbfee6b, 0xf212d747, 2, 6, 2, False
 """
-'''

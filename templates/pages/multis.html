@@ -1,38 +1,20 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}Multi Checker{% endblock %}
+{% block title %}多只生成检查{% endblock %}
 
 {% block main %}
     <section class="pla-section-results">
-    <div data-pla-messages></div>
-	
-    <div class="tab">
-		<button class="tablinks" id="defaultOpen" data-pla-tab-for="Results">Results</button>
-		<button class="tablinks" data-pla-tab-for="Maps">Count Seed Tool</button>
-	</div>
-	
-	<div id="Results" class="tabcontent">
+        <div data-pla-messages></div>
         <div class="pla-results" data-pla-results>
-            Search to begin
+            <p class="pla-results-message">点击左侧按钮开始搜索</p>
         </div>
-	</div>
-	</section>
-	
-	<section class="count-section-results">
-		<div id="Maps" class="tabcontent">
-			<section class="pla-section-spawnmap">
-				<div class="count-results" data-count-results>
-					Search For Count Seed Info
-				</div>
-			</section>
-		</div>
-	</section>
+    </section>
 {% endblock %}
 
 {% block sidebar %}
     <section class="pla-section-options">
         <div class="pla-control">
-            <label for="maxDepth">Max Number of Advances:</label>
+            <label for="maxDepth">最大刷新次数：</label>
             <select id="maxDepth">
                 <option value="5">5</option>
                 <option value="9">9</option>
@@ -42,22 +24,8 @@
             </select>
         </div>
 		
-		<div class="pla-control-spaced">
-			<label for="isvariable">Variable Spawner:</label>
-			<input type="checkbox" id="isvariable">
-        </div>
-		
 		<div class="pla-control">
-			<label for="minAlive">Min Number of Spawns:</label>
-			<select id="minAlive">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-			</select>
-		</div>
-		
-		<div class="pla-control">
-			<label for="maxAlive">Max Number of Spawns:</label>
+			<label for="maxAlive">同时生成数量：</label>
 			<select id="maxAlive">
 				<option value="2">2</option>
 				<option value="3">3</option>
@@ -65,55 +33,54 @@
 		</div>
 		
 		<div class="pla-control">
-			<label for="initspawns">Number of Initial Spawns:</label>
-			<select id="initspawns">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-			</select>
-		</div>
-		
-		<div class="pla-control">
-			<label for="groupID">Group ID:</label>
+			<label for="groupID">群组 ID：</label>
 			<input type="text" id="groupID">
 		</div>
 		
 		<div class="pla-control-spaced">
-			<label for="nightToggle">Check Night Spawns:</label>
+			<label for="nightToggle">检查夜间生成：</label>
 			<input type="checkbox" id="nightToggle">
         </div>
+		
+		<div class="pla-control">
+			<label for="selectfilter">筛选条件：</label>
+			<select id="selectfilter">
+				<option value="is_shiny">仅闪光</option>
+				<option value="is_square_shiny">仅方块闪光</option>
+				<option value="is_alpha">仅头目</option>
+				<option value="is_perfect">仅 6V</option>
+				<option value="has_5ivs">5V 及以上</option>
+				<option value="no_attack">0 攻击个体</option>
+				<option value="has_no_attack_5iv">0 攻击 + 5V</option>
+				<option value="has_6iv_over_30">6 项 30 以上</option>
+			</select>
+		</div>
         
         <div class="pla-control-actions">
-            <button class="pla-button pla-button-action" id="pla-button-checkmulti">Check Multi Spawner</button>
-			<button class="pla-button pla-button-action" id="pla-button-checkcount">Check Count Seed</button>
-		</div>
+            <button class="pla-button pla-button-action" id="pla-button-checkmulti">检查多只生成</button>
+        </div>
     </section>
 
     <section>
-        <div class="pla-control-spaced">
-            <label for="mmoShinyFilter">Shiny or Alpha</label>
+        <!--<div class="pla-control-spaced">
+            <label for="mmoShinyFilter">闪光或头目</label>
             <input type="checkbox" id="mmoShinyOrAlphaFilter">
-        </div>
+        </div>-->
 
         <div class="pla-control-spaced">
-            <label for="mmoShinyFilter">Shiny Only</label>
+            <label for="mmoShinyFilter">仅闪光</label>
             <input type="checkbox" id="mmoShinyFilter">
         </div>
 
         <div class="pla-control-spaced">
-            <label for="mmoAlphaFilter">Alpha Only</label>
+            <label for="mmoAlphaFilter">仅头目</label>
             <input type="checkbox" id="mmoAlphaFilter">
         </div>
         
-        <div class="pla-control">
-            <label for="mmoSpeciesFilter">Species Filter:</label>
+        <!--<div class="pla-control">
+            <label for="mmoSpeciesFilter">物种筛选：</label>
             <input type="text" id="mmoSpeciesFilter">
-        </div>
-		
-		<div class="pla-control">
-            <label for="ecFilter">EC Filter:</label>
-            <input type="text" id="ecFilter">
-        </div>
+        </div>-->
     </section>
 {% endblock %}
 
@@ -126,32 +93,31 @@
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Shiny:</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
-                <li><span class="pla-results-label">Alpha:</span> <span data-pla-results-alpha></span></li>
+                <li><span class="pla-results-label">闪光：</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
+                <li><span class="pla-results-label">头目：</span> <span data-pla-results-alpha></span></li>
             </ul>
 
             <ul class="pla-results-ul">
                 <li><span class="pla-results-label"><span data-pla-results-location></span></span></li>
             </ul>
 			<ul class="pla-results-ul">
-				<li><span class="pla-results-label">Advances:</span> <span data-pla-results-adv></span></li>
-				<li><span class="pla-results-label">Next Round Spawns:</span> <span data-pla-results-nextroundspawns></span></li>
+				<li><span class="pla-results-label">帧数：</span> <span data-pla-results-adv></span></li>
 			</ul>
-			<!--<button type="button" class="collapsible">See Duplicate Paths</button>
+			<!--<button type="button" class="collapsible">查看重复路径</button>
 			<div class="content">-->
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Nature:</span> <span data-pla-results-nature></span></li>
-                <li><span class="pla-results-label">Gender:</span> <span data-pla-results-gender></span></li>
-                <li><span class="pla-results-label">Rolls:</span> <span data-pla-results-rolls></span></li>
+                <li><span class="pla-results-label">性格：</span> <span data-pla-results-nature></span></li>
+                <li><span class="pla-results-label">性别：</span> <span data-pla-results-gender></span></li>
+                <li><span class="pla-results-label">判定次数：</span> <span data-pla-results-rolls></span></li>
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">EC:</span> <span data-pla-results-ec></span></li>
-                <li><span class="pla-results-label">PID:</span> <span data-pla-results-pid></span></li>
+                <li><span class="pla-results-label">EC：</span> <span data-pla-results-ec></span></li>
+                <li><span class="pla-results-label">PID：</span> <span data-pla-results-pid></span></li>
             </ul>
 
             <div class="pla-results-ivs-container">
-                <span class="pla-results-label">IVs:</span>
+                <span class="pla-results-label">个体值：</span>
                 <ul class="pla-results-ivs">
                     <li class="pla-results-ivs-hp" data-pla-results-ivs-hp></li>
                     <li class="pla-results-ivs-att" data-pla-results-ivs-att></li>
@@ -165,23 +131,6 @@
             </div>
         </div>
     </template>
-	
-	<template data-pla-count-template>
-		<div class="count-results-item" data-pla-count-template>
-			<ul class="count-results-ul">
-				<li><span class="count-results-label">Count Seed:</span> <span data-count-results-seed></span></li>
-				<li><span class="count-results-label">Current Spawned In:</span> <span data-count-results-currspawns></span></li>
-			</ul>
-			<ul class="count-results-ul">
-				<li><span class="count-results-label">First Count Seed:</span> <span data-count-results-firstseed></span></li>
-				<li><span class="count-results-label">First Count Seed Spawns:</span> <span data-count-results-first></span></li>
-			</ul>
-			<ul class="count-results-ul">
-				<li><span class="count-results-label">Second Count Seed:</span> <span data-count-results-secondseed></span></li>
-				<li><span class="count-results-label">Second Count Seed Spawns:</span> <span data-count-results-second></span></li>
-			</ul>
-		</div>
-	</template>
 {% endblock %}
 
 {% block script %}

@@ -14,6 +14,7 @@ import {
   replaceWithSpinnerUntilRestore,
   initializeApp,
 } from "./modules/common.mjs";
+import { zhSpecies, zhText } from "./modules/zh-names.mjs";
 
 const resultTemplate = document.querySelector("[data-pla-results-template]");
 const resultsArea = document.querySelector("[data-pla-results]");
@@ -162,13 +163,13 @@ function showMapInfo({ locations, spawns }) {
 
   locations.forEach((loc) => {
     let locListItem = document.createElement("li");
-    locListItem.textContent = loc;
+    locListItem.textContent = zhText(loc);
     mapLocationsArea.appendChild(locListItem);
   });
 
   spawns.forEach((spawn) => {
     let spawnItem = document.createElement("li");
-    spawnItem.textContent = spawn;
+    spawnItem.textContent = zhSpecies(spawn);
     mapSpawnsArea.appendChild(spawnItem);
   });
 }
@@ -206,7 +207,7 @@ function showResult(result) {
   const resultContainer = resultTemplate.content.cloneNode(true);
 
   resultContainer.querySelector("[data-pla-results-location]").textContent =
-    result.distortion_name;
+    zhText(result.distortion_name);
 
   showPokemonInformation(resultContainer, result);
   showPokemonHiddenInformation(resultContainer, result);
@@ -228,7 +229,7 @@ function createDistortion() {
       setTimeout(() => {
         // The distortion creation method already has some delay
         // We delay showing the distortion creation even more to allow the game to update
-        showMessage(MESSAGE_INFO, "Successfully tried to create distortion");
+        showMessage(MESSAGE_INFO, "已尝试生成时空扭曲");
         restoreButton();
       }, 1500)
     )

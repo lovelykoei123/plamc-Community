@@ -18,6 +18,7 @@ import {
   showPokemonHiddenInformation,
   initializeApp,
 } from "./modules/common.mjs";
+import { zhSpecies } from "./modules/zh-names.mjs";
 
 const resultTemplate = document.querySelector("[data-pla-results-template]");
 const resultsArea = document.querySelector("[data-pla-results]");
@@ -30,17 +31,18 @@ const groupID = document.getElementById("groupID");
 const nightCheck = document.getElementById("nightToggle");
 
 // filters
-const distShinyOrAlphaCheckbox = document.getElementById(
-  "mmoShinyOrAlphaFilter"
-);
+const distSelectFilter = document.getElementById("selectfilter");
+//const distShinyOrAlphaCheckbox = document.getElementById(
+//  "mmoShinyOrAlphaFilter"
+//);
 const distShinyCheckbox = document.getElementById("mmoShinyFilter");
 const distAlphaCheckbox = document.getElementById("mmoAlphaFilter");
 const mmoSpeciesText = document.getElementById("mmoSpeciesFilter");
 
-distShinyOrAlphaCheckbox.addEventListener("change", setFilter);
+//distShinyOrAlphaCheckbox.addEventListener("change", setFilter);
 distShinyCheckbox.addEventListener("change", setFilter);
 distAlphaCheckbox.addEventListener("change", setFilter);
-mmoSpeciesText.addEventListener("input", setFilter);
+//mmoSpeciesText.addEventListener("input", setFilter);
 
 // actions
 const checkMultiButton = document.getElementById("pla-button-checkmultiseed");
@@ -63,11 +65,11 @@ function loadPreferences() {
   distAlphaCheckbox.checked = readBoolFromStorage("mmoAlphaFilter", false);
   distShinyCheckbox.checked = readBoolFromStorage("mmoShinyFilter", false);
   nightCheck.checked = readBoolFromStorage("nightToggle");
-  distShinyOrAlphaCheckbox.checked = readBoolFromStorage(
+  /*distShinyOrAlphaCheckbox.checked = readBoolFromStorage(
     "mmoShinyOrAlphaFilter",
     false
-  );
-  validateFilters();
+  );*/
+  //validateFilters();
 }
 
 function setupPreferenceSaving() {
@@ -80,9 +82,9 @@ function setupPreferenceSaving() {
   distShinyCheckbox.addEventListener("change", (e) =>
     saveBoolToStorage("mmoShinyFilter", e.target.checked)
   );
-  distShinyOrAlphaCheckbox.addEventListener("change", (e) =>
+  /*distShinyOrAlphaCheckbox.addEventListener("change", (e) =>
     saveBoolToStorage("mmoShinyOrAlpaFilter", e.target.checked)
-  );
+  );*/
   nightCheck.addEventListener("change", (e) =>
     saveBoolToStorage("nightCheck", e.target.checked)
   );
@@ -115,15 +117,15 @@ function openTab(evt, tabName) {
 
 function setFilter(event) {
   if (event.target.checked) {
-    if (event.target == distShinyOrAlphaCheckbox) {
+    /*if (event.target == distShinyOrAlphaCheckbox) {
       distShinyCheckbox.checked = false;
       distAlphaCheckbox.checked = false;
-    }
+    }*/
     if (event.target == distShinyCheckbox) {
-      distShinyOrAlphaCheckbox.checked = false;
+      //distShinyOrAlphaCheckbox.checked = false;
     }
     if (event.target == distAlphaCheckbox) {
-      distShinyOrAlphaCheckbox.checked = false;
+      //distShinyOrAlphaCheckbox.checked = false;
     }
   }
 
@@ -131,34 +133,32 @@ function setFilter(event) {
 }
 
 function validateFilters() {
-  let shinyOrAlphaFilter = distShinyOrAlphaCheckbox.checked;
+  //let shinyOrAlphaFilter = distShinyOrAlphaCheckbox.checked;
   let shinyFilter = distShinyCheckbox.checked;
   let alphaFilter = distAlphaCheckbox.checked;
 
-  if (shinyOrAlphaFilter) {
+  /*if (shinyOrAlphaFilter) {
     shinyFilter = false;
     alphaFilter = false;
-  }
+  }*/
 
-  if (shinyFilter || alphaFilter) {
+  /*if (shinyFilter || alphaFilter) {
     shinyOrAlphaFilter = false;
-  }
+  }*/
 
-  distShinyOrAlphaCheckbox.checked = shinyOrAlphaFilter;
+  //distShinyOrAlphaCheckbox.checked = shinyOrAlphaFilter;
   distShinyCheckbox.checked = shinyFilter;
   distAlphaCheckbox.checked = alphaFilter;
 }
 
 function filter(
   result,
-  shinyOrAlphaFilter,
   shinyFilter,
   alphaFilter,
-  speciesFilter
 ) {
-  if (shinyOrAlphaFilter && !(result.shiny || result.alpha)) {
+  /*if (shinyOrAlphaFilter && !(result.shiny || result.alpha)) {
     return false;
-  }
+  }*/
 
   if (shinyFilter && !result.shiny) {
     return false;
@@ -168,12 +168,12 @@ function filter(
     return false;
   }
 
-  if (
+  /*if (
     speciesFilter.length != 0 &&
     !result.species.toLowerCase().includes(speciesFilter.toLowerCase())
   ) {
     return false;
-  }
+  }*/
 
   return true;
 }
@@ -185,6 +185,7 @@ function getOptions() {
     group_id: parseInt(groupID.value),
     maxalive: parseInt(maxAlive.value),
     isnight: nightCheck.checked,
+	filter: distSelectFilter.value,
     //	inmap: inmapCheck.checked
   };
 }
@@ -200,20 +201,20 @@ function checkMultiSeed() {
 }
 
 function showFilteredResults() {
-  validateFilters();
+  //validateFilters();
 
-  let shinyOrAlphaFilter = distShinyOrAlphaCheckbox.checked;
+  //let shinyOrAlphaFilter = distShinyOrAlphaCheckbox.checked;
   let shinyFilter = distShinyCheckbox.checked;
   let alphaFilter = distAlphaCheckbox.checked;
-  let speciesFilter = mmoSpeciesText.value;
+  //let speciesFilter = mmoSpeciesText.value;
 
   const filteredResults = results.filter((result) =>
-    filter(result, shinyOrAlphaFilter, shinyFilter, alphaFilter, speciesFilter)
+    filter(result, shinyFilter, alphaFilter)
   );
 
   if (filteredResults.length > 0) {
     resultsArea.innerHTML =
-      "<section><h3>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</h3></section>";
+      "<section><h3>D = 消失。可以通过群战（性格强势的宝可梦）或惊吓（性格胆小的宝可梦）让多只宝可梦同时消失。</h3></section>";
     filteredResults.forEach((result) => showResult(result));
   } else {
     showNoResultsFound();
@@ -224,11 +225,11 @@ function showResult(result) {
   const resultContainer = resultTemplate.content.cloneNode(true);
 
   const advances = result.path.length;
-  let pathdisplay = "Path To Target: &nbsp;";
+  let pathdisplay = "通往目标的路径：&nbsp;";
 
   pathdisplay +=
     advances == 0
-      ? "<input type='checkbox'>&nbsp; Initial Spawn"
+      ? "<input type='checkbox'>&nbsp; 初始生成"
       : result.path
           .map((step) => `<input type='checkbox'>&nbsp;D${step}`)
           .join(" &emsp;");

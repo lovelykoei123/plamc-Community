@@ -8,7 +8,10 @@ import {
   showPokemonIVs,
   showPokemonInformation,
   initializeApp,
+  showMessage,
+  MESSAGE_ERROR,
 } from "./modules/common.mjs";
+import { zhSpecies } from "./modules/zh-names.mjs";
 
 const resultTemplate = document.querySelector("[data-pla-results-template]");
 const resultsArea = document.querySelector("[data-pla-results]");
@@ -24,9 +27,9 @@ const brEncounter = document.querySelector("#brpokemon");
 
 // filters
 const distSelectFilter = document.getElementById("selectfilter");
-/*const distShinyOrAlphaCheckbox = document.getElementById(
+const distShinyOrAlphaCheckbox = document.getElementById(
   "mmoShinyOrAlphaFilter"
-);*/
+);
 const distShinyCheckbox = document.getElementById("mmoShinyFilter");
 const distAlphaCheckbox = document.getElementById("mmoAlphaFilter");
 const distDefaultCheckbox = document.getElementById("mmoDefaultRouteFilter");
@@ -145,7 +148,11 @@ function filter(
     return false;
   }
 
-  if (multiFilter && !result.multi) {
+  // 注意：result.multi 不是后端返回的字段（后端一律给 false），
+  // 它只在 showResult() 渲染时被临时置 true。所以如果先勾「仅多闪路径」再搜索，
+  // 结果里 multi 全是 false，会被这里全部过滤掉，界面上一条都不显示。
+  // 直接看 chains：有额外闪光连锁就是多闪路径。
+  if (multiFilter && (!Array.isArray(result.chains) || result.chains.length == 0)) {
     return false;
   }
 
@@ -167,6 +174,22 @@ function getOptions() {
 }
 
 function checkMMOs() {
+  // 宝可梦没选就发请求，后端会拿到空的遭遇表，一路抛到 500，
+  // 前端只会看到一句看不懂的 JSON 解析错误，所以这里先拦住。
+  if (!frEncounter.value) {
+    showMessage(MESSAGE_ERROR, "请先选择第一轮宝可梦。");
+    frEncounter.focus();
+    return;
+  }
+  if (bonusCheckbox.checked && !brEncounter.value) {
+    showMessage(
+      MESSAGE_ERROR,
+      "已勾选「是否奖励轮」，请先选择奖励轮宝可梦，或取消勾选奖励轮。"
+    );
+    brEncounter.focus();
+    return;
+  }
+
   doSearch(
     "/api/check-mmoseed",
     results,
@@ -197,7 +220,7 @@ function showFilteredResults() {
 
   if (filteredResults.length > 0) {
     resultsArea.innerHTML =
-      "<h3><section class='pla-section-results' flow>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</section></h3>";
+      "<h3><section class='pla-section-results' flow>D = 消失。可以通过群战（性格强势的宝可梦）或惊吓（性格胆小的宝可梦）让多只宝可梦同时消失。</section></h3>";
     filteredResults.forEach((result) => showResult(result));
   } else {
     showNoResultsFound();
@@ -210,11 +233,11 @@ function showResult(result) {
   let indexprefix = "";
   let chainprefix = "";
   if (result.chains.length == 0) {
-    indexprefix = "Single Shiny Path: <br>" + result.index;
-    chainprefix = "No Additional Shinies On Path";
+    indexprefix = "单闪路径：<br>" + result.index;
+    chainprefix = "该路径上没有其他闪光";
   } else {
     indexprefix =
-      "Multiple Shiny Path (Complete for more than one Shiny):  <br>" +
+      "多闪路径（完成可得到不止一只闪光）：<br>" +
       result.index;
     chainprefix = "<br>" + result.chains;
     result.multi = true;

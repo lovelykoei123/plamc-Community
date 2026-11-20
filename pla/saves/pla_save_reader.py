@@ -1,4 +1,4 @@
-from pla.rng import Xorshift32
+from ..rng import Xorshift32
 
 STATIC_XORPAD = [
             0xA0, 0x92, 0xD1, 0x06, 0x07, 0xDB, 0x32, 0xA1, 0xAE, 0x01, 0xF5, 0xC5, 0x1E, 0x84, 0x4F, 0xE3,
@@ -39,7 +39,7 @@ POKEDEX_BLOCK_SIZE = 0x1e460
 def read_research(data):
     # check the data is the right size
     if len(data) not in VALID_FILESIZES:
-        return {'error': "The file you chose isn't the right size for a PLA save file"}
+        return {'error': '你选择的文件大小不是合法的 PLA 存档'}
 
     # decrypt the bytes
     crypt_static_xorpad_bytes(data)
@@ -118,7 +118,7 @@ def read_block(data, offset):
 
 def read_pokedex(blockdata):
     if len(blockdata) != POKEDEX_BLOCK_SIZE:
-        return None, {'error': 'There was a problem checking your pokedex research levels'}
+        return None, {'error': '检查图鉴研究等级时出错'}
 
     return [read_research_entry(blockdata, 0x70 + (0x58 * i)) for i in range(MAX_SPECIES)], None
 
@@ -133,7 +133,7 @@ def read_research_entry(data, offset):
 def has_shinycharm(blockdata):
     """Returns if the file has a shiny charm and any error"""
     if len(blockdata) < 400:
-        return None, { 'error': 'There was a problem checking if you have the shiny charm'}
+        return None, { 'error': '检查是否拥有闪耀护符时出错'}
 
     for i in range(0, 400, 4):
         index = int.from_bytes(blockdata[i:i+2], byteorder='little')

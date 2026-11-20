@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
-    <title>{% if bdsp %}BDSP {% elif swsh %}SWSH {% elif g3 %}Gen3 {%elif home %}Cappy {% else %}PLA {% endif %}{% block title %}Web RNG Tools{% endblock %}</title>
+    <title>{% if bdsp %}BDSP {% elif swsh %}SWSH {% elif g3 %}Gen3 {% elif home %}{% else %}PLA {% endif %}{% block title %}在线 RNG 工具{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
@@ -81,12 +81,13 @@
         {% elif g3 %}
 		<h1 class="pla-heading"><span class="pla-heading-highlight">GEN3</span> {{ self.title() }}</h1>
         {% elif home %}
-		<h1 class="pla-heading"><span class="pla-heading-highlight">CAPPY'S</span> {{ self.title() }}</h1>
+		{# 首页只显示工具名，不再带 CAPPY'S 前缀 #}
+		<h1 class="pla-heading">{{ self.title() }}</h1>
 		{% else %}
 		<h1 class="pla-heading"><span class="pla-heading-highlight">PLA</span> {{ self.title() }}</h1>
 		{% endif %}
 
-        <button class="theme-toggle" id="theme-toggle" title="Toggles light and dark mode" aria-live="light">
+        <button class="theme-toggle" id="theme-toggle" title="切换浅色 / 深色模式" aria-live="light">
             <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
                 <g class="theme-toggle-light hidden">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
@@ -126,9 +127,11 @@
     {% endblock %}
 
     <footer class="pla-footer">
-        <a href="https://discord.gg/2JSZnm8GHf" target="_blank">Discord</a>
-        <a href="https://www.youtube.com/channel/UCrItwn5zVd2jinwkznYn-dQ" target="_blank">YouTube Guides</a>
-        <a href="https://github.com/capitalism-sudo/pla-multi-checker/wiki" target="_blank">Wiki</a>
+        <!-- <a href="https://discord.gg/2JSZnm8GHf" target="_blank">Discord</a> -->
+        <a href="https://www.bilibili.com/video/BV1X7xszMEUz" target="_blank">传阿教程</a>
+        <a href="/guide">使用说明</a>
+        <a href="https://www.bilibili.com/video/BV1CsNceVE5B/" target="_blank">B站：梦妖惊吓同消演示</a>
+        <a href="https://www.bilibili.com/video/BV1Lu9vYAEVE/" target="_blank">B站：完整刷闪流程演示</a>
     </footer>
 
     <div class="pla-background-1"></div>
@@ -152,6 +155,6 @@
     
     {% block script %}
     {% endblock %}
-</body%>
+</body>
 
 </html>

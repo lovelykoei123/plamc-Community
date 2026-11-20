@@ -6,7 +6,7 @@ import {
   showModalMessage,
   clearMessages,
   clearModalMessages,
-  doSearch,
+  doSearchNS,
   showNoResultsFound,
   saveIntToStorage,
   readIntFromStorage,
@@ -172,7 +172,7 @@ function getOptions() {
 }
 
 function checkTid() {
-  doSearch(
+  doSearchNS(
     "/api/check-bdsp-tid",
     results,
     getOptions(),
@@ -195,7 +195,7 @@ function showFilteredResults() {
   
   if (filteredResults.length > 0) {
     resultsArea.innerHTML =
-      "<section><h3>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</h3></section>";
+      "";
     filteredResults.forEach((result) => showResult(result));
   } else {
     showNoResultsFound();

@@ -6,6 +6,7 @@ import {
   clearModalMessages,
   initializeApp,
 } from "./modules/common.mjs";
+import { zhSpecies } from "./modules/zh-names.mjs";
 
 // valid PLA save file sizes
 const VALID_FILESIZES = [0x136dde, 0x13ad06];
@@ -49,7 +50,7 @@ function loadPokedex() {
     .catch((error) => {
       showMessage(
         MESSAGE_ERROR,
-        "There was an error connecting to the server, the program is not running properly"
+        "连接服务器出错，程序可能没有正常运行"
       );
     });
 }
@@ -100,38 +101,25 @@ function initializePage() {
   filterInput.addEventListener("input", (e) => {
     const filterText = e.target.value.toLowerCase();
     for (const [name, row] of researchRows) {
+      // 中文名或英文名都可以用来筛选
+      const zhName = (row.dataset.zhName || "").toLowerCase();
       row.classList.toggle(
         "hidden",
-        !name.toLowerCase().startsWith(filterText)
+        !(name.toLowerCase().startsWith(filterText) ||
+          zhName.startsWith(filterText))
       );
     }
   });
 
   shinyCharmCheckbox.addEventListener("change", saveResearch);
 
-  document
-    .getElementById("pla-research-modal-open")
-    .addEventListener("click", () => {
-      modal.showModal();
-    });
-
-  document
-    .getElementById("pla-research-modal-close")
-    .addEventListener("click", () => {
-      fileUpload.value = null;
-      closeModal();
-    });
-
-  fileUpload.addEventListener("change", (e) => {
-    uploadSave(e.target.files);
-  });
-
   loadResearch();
 }
 
 function createPokemonRow(pokemon) {
   const row = rowTemplate.content.cloneNode(true);
-  row.querySelector(".pla-research-row-name").textContent = pokemon.species;
+  const zhName = zhSpecies(pokemon.species);
+  row.querySelector(".pla-research-row-name").textContent = zhName;
   row.querySelector(
     "[data-pla-research-row-img]"
   ).src = `/static/img/sprite/${pokemon.sprite}`;
@@ -145,7 +133,9 @@ function createPokemonRow(pokemon) {
   // radios[1].addEventListener("change", saveResearch);
   // radios[2].addEventListener("change", saveResearch);
 
-  researchRows.set(pokemon.species, row.querySelector(".pla-research-row"));
+  const rowElement = row.querySelector(".pla-research-row");
+  rowElement.dataset.zhName = zhName;
+  researchRows.set(pokemon.species, rowElement);
   researchRadios.set(pokemon.species, [radios[0], radios[1], radios[2]]);
   researchTable.appendChild(row);
 }
@@ -156,21 +146,21 @@ function createPokemonRow(pokemon) {
 // or set the page state to the read research values
 function uploadSave(files) {
   if (files.length != 1) {
-    showModalMessage(MESSAGE_ERROR, "You need to select a file");
+    showModalMessage(MESSAGE_ERROR, "你需要选择一个文件");
     return;
   }
 
   const [file] = files;
 
   if (file.name != "main") {
-    showModalMessage(MESSAGE_ERROR, 'Your save file should be called "main"');
+    showModalMessage(MESSAGE_ERROR, '你的存档文件必须命名为 "main"');
     return;
   }
 
   if (VALID_FILESIZES.indexOf(file.size) < 0) {
     showModalMessage(
       MESSAGE_ERROR,
-      "The file you chose isn't the right size for a PLA save file"
+      "你选择的文件大小不是合法的 PLA 存档"
     );
     return;
   }
@@ -194,13 +184,14 @@ function uploadSave(files) {
         saveResearch();
         fileUpload.value = null;
         closeModal();
-        showMessage(MESSAGE_INFO, "Research levels loaded from save");
+        showMessage(MESSAGE_INFO, "已从存档读取研究等级");
       }
     })
     .catch((error) => {
       // this error state is when there is some kind of problem with the
       // request or the configuration of the server
       showModalMessage(MESSAGE_ERROR, error);
+	  console.log(error)
     });
 }
 

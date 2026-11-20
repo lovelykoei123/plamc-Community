@@ -1,6 +1,6 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}TID Checker{% endblock %}
+{% block title %}训练家 ID 检查{% endblock %}
 
 {% block head %}
 	<script type="module" src="static/js/jquery.min.mjs"></script>
@@ -11,8 +11,8 @@
 {% block main %}
 
 	<div class="tab">
-			<button class="tablinks" id="defaultOpen" data-pla-tab-for="Results">Results</button>
-			<button class="tablinks" data-pla-tab-for="Timer">TID/SID Timer</button>
+			<button class="tablinks" id="defaultOpen" data-pla-tab-for="Results">结果</button>
+			<button class="tablinks" data-pla-tab-for="Timer">TID/SID 计时器</button>
 	</div>
 		
 	<div id="Results" class="tabcontent">
@@ -20,7 +20,7 @@
 	<section class="pla-section-results">
         <div data-pla-messages></div>
         <div class="pla-results" data-pla-results>
-            <p class="pla-results-message">Search to begin</p>
+            <p class="pla-results-message">点击左侧按钮开始搜索</p>
         </div>
     </section>
 	
@@ -32,21 +32,21 @@
 		<div data-swsh-messages></div>
 		<div class="swsh-results" data-swsh-results>
 		<ul class="swsh-results-ul">
-		<li><span class="pla-results-label">S[0]:</span><input style="width: 200px;" type="text" id="time-s0" maxlength=16 value=""></li>
-		<li><span class="pla-results-label">S[1]:</span><input style="width: 200px;" type="text" id="time-s1" maxlength=16 value=""></li>
+		<li><span class="pla-results-label">S[0]：</span><input style="width: 200px;" type="text" id="time-s0" maxlength=16 value=""></li>
+		<li><span class="pla-results-label">S[1]：</span><input style="width: 200px;" type="text" id="time-s1" maxlength=16 value=""></li>
 		</ul>
 		<ul class="swsh-results-ul">
-		<li><span class="pla-results-label">Timestamp:</span><input style="width: 200px;" type="text" id="ts" value=""></li>
-		<li><span class="pla-results-label">Target Advance:</span><input style="width: 100px;" type="number" id="tadv" maxlength=16 value=""></li>
+		<li><span class="pla-results-label">时间戳：</span><input style="width: 200px;" type="text" id="ts" value=""></li>
+		<li><span class="pla-results-label">目标帧数：</span><input style="width: 100px;" type="number" id="tadv" maxlength=16 value=""></li>
 		</ul>
 		<ul class="swsh-results-ul">
-		<li><span class="pla-results-label">Advances: </span><span id="time-adv">0</span></li>
-        <li><span class="pla-results-label">Current Timestamp: </span><span id="time-curr">0</span></li>
-        <li><span class="pla-results-label">Time Until Next Advance: </span><span id="tuna">0</span></li>
-        <li><span class="pla-results-label">Time Until Target Advance: </span><span id="tuta">0</span></li>
+		<li><span class="pla-results-label">当前帧数：</span><span id="time-adv">0</span></li>
+        <li><span class="pla-results-label">当前时间戳：</span><span id="time-curr">0</span></li>
+        <li><span class="pla-results-label">距下一帧：</span><span id="tuna">0</span></li>
+        <li><span class="pla-results-label">距目标帧：</span><span id="tuta">0</span></li>
 		</ul>
     <br>
-    <button class="pla-button pla-button-action" id="pla-button-starttime">Generate</button>
+    <button class="pla-button pla-button-action" id="pla-button-starttime">开始计算</button>
 		</div>
 	
 	</section>
@@ -58,38 +58,38 @@
     <section class="pla-section-options">
 		<div class="pla-control">
             <label for="inputs0">S0</label>
-            <input id="inputs0" placeholder="Input S[0]">
+            <input id="inputs0" placeholder="输入 S[0]">
         </div>
 		
 		<div class="pla-control">
             <label for="inputs1">S1</label>
-            <input id="inputs1" placeholder="Input S[1]">
+            <input id="inputs1" placeholder="输入 S[1]">
         </div>
 		
 		<div class="pla-control">
             <label for="inputs2">S2</label>
-            <input id="inputs2" placeholder="Input S[2]">
+            <input id="inputs2" placeholder="输入 S[2]">
         </div>
 		
 		<div class="pla-control">
             <label for="inputs3">S3</label>
-            <input id="inputs3" placeholder="Input S[3]">
+            <input id="inputs3" placeholder="输入 S[3]">
         </div>
 		
 		<div class="pla-control">
-            <label for="minadvances">Starting Advance:</label>
-            <input type="number" id="minadvances" placeholder="Advances">
+            <label for="minadvances">起始帧数：</label>
+            <input type="number" id="minadvances" placeholder="帧数">
         </div>
 		
 		<div class="pla-control">
-            <label for="advances">Max Advance:</label>
-            <input type="number" id="advances" placeholder="Advances">
+            <label for="advances">最大帧数：</label>
+            <input type="number" id="advances" placeholder="帧数">
         </div>
 		
 		<div class="pla-control">
-			<label for="idfilter">Filter On:</label>
+			<label for="idfilter">筛选依据：</label>
 			<select id="idfilter">
-				<option value="-1">None</option>
+				<option value="-1">不筛选</option>
 				<option value="0">G8TID</option>
 				<option value="1">TID</option>
 				<option value="2">SID</option>
@@ -98,12 +98,12 @@
 		</div>
 		
 		<div class="pla-control">
-            <label for="tidfilter">IDs to Search For:</label>
-            <textarea id="tidfilter" cols="2" rows="1" style="height: 60px;" placeholder="Comma separated TIDs"></textarea>
+            <label for="tidfilter">要查找的 ID：</label>
+            <textarea id="tidfilter" cols="2" rows="1" style="height: 60px;" placeholder="多个 TID 用逗号分隔"></textarea>
         </div>
         
         <div class="pla-control-actions">
-            <button class="pla-button pla-button-action" id="pla-button-checktid">Check TID</button>
+            <button class="pla-button pla-button-action" id="pla-button-checktid">检查 TID</button>
         </div>
     </section>
 
@@ -116,11 +116,11 @@
         <div class="pla-results-item" data-pla-results-template>
             
 			<ul class="pla-results-ul">
-				<li><span class="pla-results-label">Advances:</span> <span data-pla-results-adv></span></li>
-				<li><span class="pla-results-label">G8TID:</span> <span data-pla-results-g8tid></span></li>			
-				<li><span class="pla-results-label">TID:</span><span data-pla-results-tid></span></li>
-                <li><span class="pla-results-label">SID:</span> <span data-pla-results-sid></span></li>
-                <li><span class="pla-results-label">TSV:</span> <span data-pla-results-tsv></span></li>
+				<li><span class="pla-results-label">帧数：</span> <span data-pla-results-adv></span></li>
+				<li><span class="pla-results-label">G8TID：</span> <span data-pla-results-g8tid></span></li>			
+				<li><span class="pla-results-label">TID：</span><span data-pla-results-tid></span></li>
+                <li><span class="pla-results-label">SID：</span> <span data-pla-results-sid></span></li>
+                <li><span class="pla-results-label">TSV：</span> <span data-pla-results-tsv></span></li>
             </ul>
 
  

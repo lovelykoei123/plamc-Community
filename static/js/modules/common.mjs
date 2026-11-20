@@ -1,3 +1,5 @@
+import { zhSpecies, zhNature } from "./zh-names.mjs";
+
 // Maps
 export const DEFAULT_MAP = "obsidianfieldlands";
 
@@ -12,7 +14,7 @@ export const PREFERENCES_VERSION = 1;
 export function initializeApp(page) {
   checkPreferencesVersion();
 
-  if (page !== "settings") {
+  if ((page !== "settings") && (page != "spawns") && (page != "gen3")) {
     checkForResearch();
   }
 }
@@ -34,7 +36,7 @@ function checkPreferencesVersion() {
 
     showMessage(
       MESSAGE_INFO,
-      "PLA Multi Checker was recently updated, and we had to clear your old preferences to be compatible with the new version - don't worry, your research levels are still saved."
+      "PLA Multi Checker 刚刚更新，为了兼容新版本，我们不得不清除你之前的设置——不用担心，你的研究等级数据仍然保留着。"
     );
   }
 }
@@ -46,7 +48,7 @@ function checkForResearch() {
   if (!researchString) {
     showMessage(
       MESSAGE_INFO,
-      "It looks like you haven't set the Pokédex research levels you've reached in the game. We need this information to work out your shiny odds. Please go to the 'Settings' page to fill it in. You don't have to fill in everything, but the more detail you give the more accurate your results will be."
+      "看起来你还没有设置游戏里已完成的图鉴研究等级。我们需要这些信息来计算你的闪光概率。请前往「设置」页面填写。不必填满全部，但填写得越详细，结果就越准确。"
     );
     return false;
   }
@@ -96,6 +98,21 @@ export function clearModalMessages() {
   if (modalMessages) modalMessages.innerHTML = "";
 }
 
+// 后端抛异常时 Flask 返回的是 HTML 错误页，直接 response.json() 会抛出
+// “SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON”，
+// 用户完全看不懂，所以统一在这里先检查再解析。
+function readJsonResponse(response) {
+  const ctype = response.headers.get("content-type") || "";
+  if (!response.ok || !ctype.includes("application/json")) {
+    throw new Error(
+      "本地服务返回了异常响应（HTTP " +
+        response.status +
+        "）。请重试；如果一直出现，请把程序目录下的「运行日志.txt」发给开发者。"
+    );
+  }
+  return response.json();
+}
+
 // Results Lifecycle
 // This is the big function - basically a metafunction that takes other functions
 // It abstracts a lot of common functionality for any search that will return an array of results to be shown on the page
@@ -112,7 +129,7 @@ export function doSearch(
   if (!researchString) {
     showMessage(
       MESSAGE_ERROR,
-      "You haven't set the Pokedex research levels you've reached. This information is needed to work out your shiny odds. Please go to the 'Settings' page and fill in this information."
+      "你还没有设置已完成的图鉴研究等级。计算闪光概率需要这项信息。请前往「设置」页面填写。"
     );
     return false;
   }
@@ -135,7 +152,55 @@ export function doSearch(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(options),
   })
-    .then((response) => response.json())
+    .then(readJsonResponse)
+    .then((res) => {
+      results.length = 0;
+
+      // shows an error if one has been returned
+      if (res.hasOwnProperty("error")) {
+        showMessage(MESSAGE_ERROR, res.error);
+      } else if (res.hasOwnProperty("results")) {
+        console.log(res);
+        results.push(...res.results);
+      }
+
+      setFetchingComplete();
+      if (restoreButton) restoreButton();
+      displayFunction();
+    })
+    .catch((error) => {
+      if (restoreButton) restoreButton();
+      showResultsError(error);
+    });
+
+  return true;
+}
+
+export function doSearchNS(
+  apiRoute,
+  results,
+  options,
+  displayFunction,
+  activationButton = null
+) {
+
+  // if that's all valid, set the page state to fetching results
+  results.length = 0;
+  showFetchingResults();
+
+  let restoreButton = null;
+  // if the activation button was provided, disable it to prevent hammering the api
+  if (activationButton) {
+    restoreButton = disableUntilRestore(activationButton);
+  }
+
+  // and do the fetch
+  fetch(apiRoute, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(options),
+  })
+    .then(readJsonResponse)
     .then((res) => {
       results.length = 0;
 
@@ -166,17 +231,6 @@ export function doSearchSWSH(
   displayFunction,
   activationButton = null
 ) {
-  const researchString = localStorage.getItem("pla-research");
-
-  if (!researchString) {
-    showMessage(
-      MESSAGE_ERROR,
-      "You haven't set the Pokedex research levels you've reached. This information is needed to work out your shiny odds. Please go to the 'Settings' page and fill in this information."
-    );
-    return false;
-  }
-
-  options["research"] = JSON.parse(researchString);
 
   // if that's all valid, set the page state to fetching results
   results.length = 0;
@@ -194,7 +248,7 @@ export function doSearchSWSH(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(options),
   })
-    .then((response) => response.json())
+    .then(readJsonResponse)
     .then((res) => {
       results.length = 0;
 
@@ -230,7 +284,7 @@ export function doSearchTab(
   if (!researchString) {
     showMessage(
       MESSAGE_ERROR,
-      "You haven't set the Pokedex research levels you've reached. This information is needed to work out your shiny odds. Please go to the 'Settings' page and fill in this information."
+      "你还没有设置已完成的图鉴研究等级。计算闪光概率需要这项信息。请前往「设置」页面填写。"
     );
     return false;
   }
@@ -252,7 +306,7 @@ export function doSearchTab(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(options),
   })
-    .then((response) => response.json())
+    .then(readJsonResponse)
     .then((res) => {
       results.length = 0;
 
@@ -335,7 +389,10 @@ function setFetchingCompleteSWSH() {
 
 function showResultsError(error) {
   setFetchingComplete();
-  showMessage(MESSAGE_ERROR, error ?? "An error has occured");
+  showMessage(
+    MESSAGE_ERROR,
+    (error && error.message) || error || "发生了一个错误"
+  );
   console.log(error);
 }
 
@@ -345,7 +402,7 @@ export function showNoResultsFound() {
     resultsArea.innerHTML = "";
     const message = document.createElement("p");
     message.classList.add("pla-results-message");
-    message.textContent = "No results found";
+    message.textContent = "没有找到结果";
     resultsArea.appendChild(message);
   }
 }
@@ -356,7 +413,7 @@ export function showNoResultsFoundSWSH() {
     resultsArea.innerHTML = "";
     const message = document.createElement("p");
     message.classList.add("swsh-results-message");
-    message.textContent = "No results found";
+    message.textContent = "没有找到结果";
     resultsArea.appendChild(message);
   }
 }
@@ -451,14 +508,20 @@ export function showPokemonIVs(resultContainer, result) {
 }
 
 const genderStrings = {
-  male: "Male <i class='fa-solid fa-mars' style='color:blue'/>",
-  female: "Female <i class='fa-solid fa-venus' style='color:pink'/>",
-  genderless: "Genderless <i class='fa-solid fa-genderless'/>",
+  male: "雄性 <i class='fa-solid fa-mars' style='color:blue'/>",
+  female: "雌性 <i class='fa-solid fa-venus' style='color:pink'/>",
+  genderless: "无性别 <i class='fa-solid fa-genderless'/>",
 };
 
+// 兼容后端两种取值：'male'/'female'/'genderless' 字符串，以及 1~252 的随机值 / -1 固定性别
+export function genderText(gender) {
+  if (typeof gender !== "string") return "—";
+  return genderStrings[gender.trim().toLowerCase()] || "—";
+}
+
 export function showPokemonGender(resultContainer, gender) {
-  resultContainer.querySelector("[data-pla-results-gender]").innerHTML =
-    genderStrings[gender];
+  const target = resultContainer.querySelector("[data-pla-results-gender]");
+  if (target) target.innerHTML = genderText(gender);
 }
 
 export function showPokemonInformation(resultContainer, result) {
@@ -466,15 +529,20 @@ export function showPokemonInformation(resultContainer, result) {
   sprite.src = "static/img/sprite/" + result.sprite;
   resultContainer.querySelector(".pla-results-sprite").appendChild(sprite);
 
+  const speciesText = zhSpecies(result.species);
   resultContainer.querySelector("[data-pla-results-species]").textContent =
-    result.alpha ? "Alpha " + result.species : result.species;
+    result.alpha && !speciesText.startsWith("头目")
+      ? "头目 " + speciesText
+      : speciesText;
   resultContainer.querySelector("[data-pla-results-nature]").textContent =
-    result.nature;
+    zhNature(result.nature);
   resultContainer.querySelector("[data-pla-results-rolls]").textContent =
     result.rolls;
 
-  resultContainer.querySelector("[data-pla-results-gender]").innerHTML =
-    genderStrings[result.gender];
+  const genderTarget = resultContainer.querySelector(
+    "[data-pla-results-gender]"
+  );
+  if (genderTarget) genderTarget.innerHTML = genderText(result.gender);
 
   let resultShiny = resultContainer.querySelector("[data-pla-results-shiny]");
   let sparkle = "";
@@ -487,13 +555,13 @@ export function showPokemonInformation(resultContainer, result) {
   sparklesprite.style.cssText =
     "pull-left;display:inline-block;margin-left:0px;";
   if (result.shiny && result.square) {
-    sparkle = "Square Shiny!";
+    sparkle = "方块闪光！";
     sparklesprite.src = "static/img/square.png";
   } else if (result.shiny) {
     sparklesprite.src = "static/img/shiny.png";
-    sparkle = "Shiny!";
+    sparkle = "闪光！";
   } else {
-    sparkle = "Not Shiny";
+    sparkle = "非闪光";
   }
   resultContainer
     .querySelector("[data-pla-results-shinysprite]")
@@ -503,7 +571,7 @@ export function showPokemonInformation(resultContainer, result) {
   resultShiny.classList.toggle("pla-result-false", !result.shiny);
 
   let resultAlpha = resultContainer.querySelector("[data-pla-results-alpha]");
-  resultAlpha.textContent = result.alpha ? "Alpha!" : "Not Alpha";
+  resultAlpha.textContent = result.alpha ? "头目！" : "非头目";
   resultAlpha.classList.toggle("pla-result-true", result.alpha);
   resultAlpha.classList.toggle("pla-result-false", !result.alpha);
 }

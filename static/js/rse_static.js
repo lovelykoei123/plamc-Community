@@ -6,7 +6,7 @@ import {
     showModalMessage,
     clearMessages,
     clearModalMessages,
-    doSearch,
+    doSearchNS,
     showNoResultsFound,
     saveIntToStorage,
     readIntFromStorage,
@@ -19,6 +19,7 @@ import {
     initializeApp,
     setupIVBox,
   } from "./modules/common.mjs";
+import { zhSpecies } from "./modules/zh-names.mjs";
   
   const resultTemplate = document.querySelector("[data-pla-results-template]");
   const resultsArea = document.querySelector("[data-pla-results]");
@@ -119,7 +120,7 @@ import {
   
   $(function() {
       $(".chosen-select").chosen({
-          no_results_text: "Oops, nothing found!",
+          no_results_text: "没有找到匹配项！",
           inherit_select_classes: true
       });
       
@@ -255,7 +256,7 @@ import {
   }
   
   function checkStatic() {
-    doSearch(
+    doSearchNS(
       "/api/check-gen3-static",
       results,
       getOptions(),
@@ -307,13 +308,13 @@ import {
       
     if (result.shiny && result.square) {
       sparklesprite.src = "static/img/square.png";
-      sparkle = "Square Shiny!";
+      sparkle = "方块闪光！";
     }
     else if (result.shiny) {
       sparklesprite.src = "static/img/shiny.png";
-      sparkle = "Shiny!";
+      sparkle = "闪光！";
     } else {
-      sparkle = "Not Shiny";
+      sparkle = "非闪光";
     }
     resultContainer
       .querySelector("[data-pla-results-shinysprite]")
@@ -352,9 +353,9 @@ import {
       
     
     const genderStrings = {
-    male: "Male <i class='fa-solid fa-mars' style='color:blue'/>",
-    female: "Female <i class='fa-solid fa-venus' style='color:pink'/>",
-    genderless: "Genderless <i class='fa-solid fa-genderless'/>",
+    male: "雄性 <i class='fa-solid fa-mars' style='color:blue'/>",
+    female: "雌性 <i class='fa-solid fa-venus' style='color:pink'/>",
+    genderless: "无性别 <i class='fa-solid fa-genderless'/>",
     };
   
     resultContainer.querySelector("[data-pla-results-gender]").innerHTML =

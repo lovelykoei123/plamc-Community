@@ -1,77 +1,33 @@
 import json
-from app import RESOURCE_PATH
-from pla.core import BASE_ROLLS, generate_from_seed, get_rolls, get_sprite
-from pla.data import pokedex, natures
-from pla.rng import XOROSHIRO
+from ..app import RESOURCE_PATH
+from .core import BASE_ROLLS, generate_from_seed, get_rolls, get_sprite
+from .data import pokedex, natures
+from .rng import XOROSHIRO
 
 encounter_table = json.load(open(RESOURCE_PATH + "resources/multi-es.json"))
 
 SPAWNER_PTR = "[[main+42a6ee0]+330]"
 
-def multi(group_seed, research, group_id, maxspawns, minspawns, maxdepth, initspawns, is_variable, rolls_override = None, maxalive_seed = 0):
+def multi(group_seed, research, group_id, maxspawns, maxdepth, rolls_override = None):
     rng = XOROSHIRO(group_seed)
     spawns = []
     
     encounters, encsum = precompute(research, group_id, rolls_override)
     
     # init spawns
-    if  not is_variable:
-        roundspawns = maxspawns
-        initspawns = maxspawns
-        initnextspawns = initspawns
-    else:
-        #seed = (maxalive_seed - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF
-        #_,roundspawns = get_current_spawns(seed, maxspawns, minspawns)
-        maxalive_seed,initnextspawns = get_current_spawns(maxalive_seed, maxspawns, minspawns)
-        roundspawns = initspawns
-        #print(f"Seed: {seed:X}")
-        print(f"Maxalive Seed: {maxalive_seed:X}")
-    
-    print(f"Initial Round Spawns: {initnextspawns}")
-    for i in range(roundspawns):
+    for i in range(maxspawns):
         res = generate_spawn2(rng, encounters, encsum, [])
-        res["nextspawns"] = initnextspawns
         spawns.append(res)
     
-    roundspawns = initnextspawns
-    currspawns = initspawns
     current = [spawns[-1]]
-    for adv in range(maxdepth):
+    for _ in range(maxdepth):
         last = current
         current = []
-
-        if not is_variable:
-            roundspawns = maxspawns
-            currspawns = maxspawns
-            delta = 0
-        else:
-            maxalive_seed,roundspawns = get_current_spawns(maxalive_seed, maxspawns, minspawns)
-            delta = roundspawns - currspawns
-            print(f"Delta: {delta}")
-            for pkmn in last:
-                rng.reseed(pkmn['nextseed'])
-                for i in range(delta):
-                    res = generate_spawn2(rng, encounters, encsum, pkmn['path'] + [i+1])
-                    res["nextspawns"] = roundspawns
-                    current.append(res)
-                    spawns.append(res)
-            if delta <= 0:
-                delta = 0
-            currspawns = roundspawns
-
-        print(f"Round spawns for Advance {adv+1}: {roundspawns}")
-        #print(f"Next Round Spawns: {roundspawns}")
-        print(f"Maxalive Seed: {maxalive_seed:X}")
         
         for pkm in last:
             rng.reseed(pkm['nextseed'])
-            if delta != 0:
-                rng.next()
-                rng.next()
-                rng.reseed(*rng.seed)
-            for i in range(delta,currspawns):
+            for i in range(maxspawns):
                 res = generate_spawn2(rng, encounters, encsum, pkm['path'] + [i+1])
-                res["nextspawns"] = roundspawns
                 current.append(res)
                 spawns.append(res)
     
@@ -139,61 +95,24 @@ def precompute(research, group_id, rolls_override = None):
         
     return cache, encsum
 
-def get_current_spawns(seed,maxalive,minalive):
-    rng = XOROSHIRO(seed)
-    delta = maxalive - minalive
-    roundalive = minalive + rng.rand(delta+1)
-    #print(f"Seed after generating Round: {rng.next():X}")
-    #rng.reseed(rng.next())
-
-    return rng.next(),roundalive
-
-def check_multi_spawner(reader, research, group_id, maxspawns, maxdepth, isnight, minspawns, initspawns, is_variable, rolls_override = None):
+def check_multi_spawner(reader, research, group_id, maxspawns, maxdepth, isnight, rolls_override = None):
     spawner_pointer = f"{SPAWNER_PTR}+{0x70 + group_id*0x440 + 0x20:X}"
     print(f"Spawner Pointer: {spawner_pointer}")
 
     generator_seed = reader.read_pointer_int(spawner_pointer, 8)
     group_seed = (generator_seed - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF
 
-    maxalive_seed = reader.read_pointer_int(f"{SPAWNER_PTR}+{0x70 + group_id*0x440 + 0x400:X}",8)
-    #maxalive_seed = reader.read_pointer_int(f"{SPAWNER_PTR}+{0x70 + group_id*0x440 + 0x20 - 0x50:X}",8)
-    #maxalive_seed = (maxalive_seed - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF
-    print(f"Maxalive Seed Pointer: {SPAWNER_PTR}+{0x70 + group_id*0x440 + 0x400:X}")
-    print(f"Maxalive Seed (at start): {maxalive_seed:X}")
-    #print(f"Maxalive Seed Pointer: {SPAWNER_PTR}+{0x70 + group_id*0x440 + 0x20 - 0x50:X}")
+    return check_multi_spawner_seed(group_seed, research, group_id, maxspawns, maxdepth, isnight, rolls_override)
 
-    return check_multi_spawner_seed(group_seed, research, group_id, maxspawns, minspawns, maxdepth, isnight, initspawns, is_variable, rolls_override, maxalive_seed)
-
-def check_multi_spawner_seed(group_seed, research, group_id, maxspawns, minspawns, maxdepth, isnight, initspawns, is_variable, rolls_override = None, maxalive_seed = 0):
+def check_multi_spawner_seed(group_seed, research, group_id, maxspawns, maxdepth, isnight, rolls_override = None):
+    if maxdepth > 18:
+        maxdepth = 5
+    if maxspawns == 3 and maxdepth >9:
+        maxdepth = 9
     if isnight and encounter_table.get(f"{group_id}"+"n") is not None:
         print("Night check is ok")
         group_id = f"{group_id}" + "n"
         print(f"Group ID: {group_id}")
     
-    return multi(group_seed, research, group_id, maxspawns, minspawns, maxdepth, initspawns, is_variable, rolls_override, maxalive_seed)
-
-def check_count_seed_info(reader,group_id,maxspawns,minspawns):
-
-    max_seed = reader.read_pointer_int(f"{SPAWNER_PTR}+{0x70 + group_id*0x440 + 0x400:X}",8)
-    currspawns = reader.read_pointer_int(f"{SPAWNER_PTR}+{0x70 + group_id*0x440 + 0x20 - 0x48:X}",1)
-
-    firstseed,first = get_current_spawns(max_seed,maxspawns,minspawns)
-    secondseed,second = get_current_spawns(firstseed,maxspawns,minspawns)
-    #seed,first = get_current_spawns(seed,maxspawns,minspawns)
-    #seed,second = get_current_spawns(seed,maxspawns,minspawns)
-
-    spawns = first
-    results = {
-        "seed":f"{max_seed:X}",
-        "spawns":spawns,
-        "firstseed":f"{firstseed:X}",
-        "secondseed":f"{secondseed:X}",
-        "currspawns":currspawns,
-        "first":first,
-        "second":second
-    }
-
-    print(results)
-
-    return results
+    return multi(group_seed, research, group_id, maxspawns, maxdepth, rolls_override)
     

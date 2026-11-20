@@ -1,28 +1,27 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}Settings{% endblock %}
+{% block title %}设置{% endblock %}
 
 {% block main %}
     <section class="pla-section flow">
-        <h2>General Settings</h2>
+        <h2>通用设置</h2>
 
         <div class="pla-control-spaced">
             <label for="pla-research-shinycharm">
-                Do you have the Shiny Charm?
+                你是否拥有闪耀护符？
             </label>
             <input type="checkbox" id="pla-research-shinycharm">
         </div>
     </section>
     <section class="pla-section-results flow">
-        <h2>Research Levels</h2>
+        <h2>研究等级</h2>
 
-        <p>You can set the Pokédex research level for all Pokémon at once, set them individually or read them from a
-            save file.</p>
+        <p>你可以一次性设置所有宝可梦的图鉴研究等级，也可以逐只单独设置，或直接从存档中读取。</p>
 
         <div data-pla-messages></div>
 
         <div>
-            <input type="text" id="pla-research-filter" placeholder="Filter Pokémon...">
+            <input type="text" id="pla-research-filter" placeholder="筛选宝可梦...">
         </div>
 
         <div class="pla-research-table-container">
@@ -43,29 +42,12 @@
     <section class="pla-section-options">
 
         <div class="pla-control-actions">
-            <p>Set the research level for all Pokémon to:</p>
-            <button type="button" class="pla-button" id="pla-research-set-base">Base Level</button>
-            <button type="button" class="pla-button" id="pla-research-set-complete">Level 10</button>
-            <button type="button" class="pla-button" id="pla-research-set-perfect">Perfect</button>
+            <p>将所有宝可梦的研究等级设为：</p>
+            <button type="button" class="pla-button" id="pla-research-set-base">基础等级</button>
+            <button type="button" class="pla-button" id="pla-research-set-complete">等级 10</button>
+            <button type="button" class="pla-button" id="pla-research-set-perfect">完美</button>
         </div>
-
-        <div class="pla-control-actions">
-            <button type="button" class="pla-button pla-button-action" id="pla-research-modal-open">Read from save
-                file</button>
-        </div>
-
-        <dialog class="pla-modal" id="pla-research-modal">
-            <p>Select the file called "main" from an exported save to load the research progress from that save
-                file.</p>
-            <div data-pla-modal-messages></div>
-            <div class="pla-control-spaced">
-                <div class="pla-file-input">
-                    <input type="file" id="pla-research-selectsave">
-                    <label for="pla-research-selectsave" class="pla-button pla-button-action">Choose Save File</label>
-                </div>
-                <button type="button" class="pla-button pla-button-action" id="pla-research-modal-close">Close</button>
-            </div>
-        </dialog>
+		
     </section>
 {% endblock %}
 
@@ -79,18 +61,18 @@
             </td>
             <td>
                 <label>
-                    <input type="radio" class="pla-research-radio" value="0" checked /> Basic
+                    <input type="radio" class="pla-research-radio" value="0" checked /> 基础
                 </label>
             </td>
             <td>
                 <label>
-                    <input type="radio" class="pla-research-radio" value="1" /> Level 10
+                    <input type="radio" class="pla-research-radio" value="1" /> 等级 10
                 </label>
 
             </td>
             <td>
                 <label>
-                    <input type="radio" class="pla-research-radio" value="3" /> Perfect
+                    <input type="radio" class="pla-research-radio" value="3" /> 完美
                 </label>
             </td>
         </tr>

@@ -1,17 +1,13 @@
-from bdsp.core import generate_egg
-from bdsp.core.generate_bdsp import generate_egg
-from pla.rng import Xorshift
-from pla.data import natures
-from bdsp.filters import compare_all_ivs
-from bdsp.core import Daycare
+from .core import generate_egg
+from .core.generate_bdsp import generate_egg
+from ..pla.rng import Xorshift
+from ..pla.data import natures
+from .filters import compare_all_ivs
+from .core import Daycare
 
 def read_egg_seed(states, filter, daycare_info, delay):
 
     daycare = Daycare(**daycare_info)
-
-    parentAbility = daycare.get_parent_ability(0 if daycare.is_ditto(1) else 1)
-
-    print(f"Parent Ability: {parentAbility}")
 
     result = {}
 

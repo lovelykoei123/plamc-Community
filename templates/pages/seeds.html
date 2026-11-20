@@ -1,27 +1,30 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}MMO Checker{% endblock %}
+{% block title %}大量出现种子检查{% endblock %}
 
 {% block main %}
     <section class="pla-section-results">
         <div data-pla-messages></div>
         <div class="pla-results" data-pla-results>
-            <p class="pla-results-message">This tool was created by Cappy, with help from Anubis, Kurt, Lincoln, Zyro and Santacrab420 for code and other assistance.</p>
+            <p class="pla-results-message">本工具由 Lovely 打包修改，原作者 Cappy，感谢 Anubis、Kurt、Lincoln、Zyro 与 Santacrab420 提供的代码与其他帮助。</p>
         </div>
     </section>
 {% endblock %}
 
 {% block head %}
+	<script type="module" src="{{ url_for('static', filename='js/modules/zh-names.mjs') }}"></script>
 	<script type="text/javascript" src="static/js/jquery.min.mjs"></script>
 	<script>
 	$(document).ready(function(e){
+		// 宝可梦英文名转中文（模块未加载时保底显示原文）
+		var zhs = window.zhSpecies || function (s) { return s; };
 		function get_json_data(id, parent_id) {
 			var html_code = '';
 			$.getJSON('static/resources/seedhashes.json', function(data) {
-				html_code += '<option value="">Select Species</option>';
+				html_code += '<option value="">选择宝可梦</option>';
 				$.each(data, function(key, value) {
 					if (value.parent_id == parent_id) {
-						html_code += '<option value="' + value.hash + '">' + value.species + '</option>';
+						html_code += '<option value="' + value.hash + '">' + zhs(value.species) + '</option>';
 					}
 				});
 				$('#' + id).html(html_code);
@@ -35,7 +38,7 @@
 			if (brand_id != '') {
 				get_json_data('brpokemon', brand_id);
 			} else {
-				$('#brpokemon').html('<option value="">Select Second Round Species</option>');
+				$('#brpokemon').html('<option value="">选择第二轮宝可梦</option>');
 			}
 		})
 
@@ -58,7 +61,7 @@
 		
 	$(function() {
 	$(".chosen-select").chosen({
-		no_results_text: "Oops, nothing found!",
+		no_results_text: "没有找到匹配项！",
 		inherit_select_classes: true
 	});
 	
@@ -73,7 +76,7 @@
 			if (brand_id != '') {
 				get_json_data('brpokemon', brand_id);
 			} else {
-				$('#brpokemon').html('<option value="">Select Second Round Species</option>');
+				$('#brpokemon').html('<option value="">选择第二轮宝可梦</option>');
 			}
 		});*/
 		
@@ -85,17 +88,22 @@
 {% block sidebar %}
     <section class="pla-section-options">
         <div class="pla-control">
-            <label for="inputseed">Seed</label>
-            <input type="number" id="inputseed" placeholder="Input Seed">
+            <label for="inputseed">种子</label>
+            <div class="pla-seed-row">
+                <button type="button" class="pla-button pla-seed-import"
+                        data-import-seed
+                        title="从 pokeldn 插件 junli-pla-mmo-seed 的 latest_seed.txt 读取最新种子">导入</button>
+                <input type="number" id="inputseed" placeholder="输入种子">
+            </div>
         </div>
 
         <div class="pla-control-spaced">
-            <label for="normalcheckbox">Normal Outbreaks Only</label>
+            <label for="normalcheckbox">仅普通大量发生</label>
             <input type="checkbox" id="normalcheckbox">
         </div>
 
         <div class="pla-control">
-            <label for="frspawns">First Round Spawns</label>
+            <label for="frspawns">第一轮生成数量</label>
             <select id="frspawns">
                 <option value="8">8</option>
                 <option value="9">9</option>
@@ -104,19 +112,19 @@
         </div>
 
         <div class="pla-control">
-            <label for="frpokemon">First Round Pokemon</label>
+            <label for="frpokemon">第一轮宝可梦</label>
             <select name="frpokemon" id="frpokemon" class="form-control chosen-select-single">
-                <option value="">Select Pokemon</option>
+                <option value="">选择宝可梦</option>
             </select>
         </div>
 
         <div class="pla-control-spaced">
-            <label for="bonus">Bonus Round?</label>
+            <label for="bonus">是否奖励轮？</label>
             <input type="checkbox" id="bonus">
         </div>
 
         <div class="pla-control" data-pla-bonus-round>
-            <label for="brspawns">Bonus Round Spawns</label>
+            <label for="brspawns">奖励轮生成数量</label>
             <select id="brspawns">
                 <option value="6">6</option>
                 <option value="7">7</option>
@@ -124,68 +132,68 @@
         </div>
 
         <div class="pla-control" data-pla-bonus-round>
-            <label for="brpokemon">Bonus Round Pokemon</label>
+            <label for="brpokemon">奖励轮宝可梦</label>
             <select name="brpokemon" id="brpokemon" class="form-control chosen-select-single">
-                <option value="">Select Pokemon</option>
+                <option value="">选择宝可梦</option>
             </select>
         </div>
 
         <!--
         <div class="pla-control-spaced">
-            <label for="inmapcheck">In Area: (Not Currently Functional)</label>
+            <label for="inmapcheck">所在区域（暂不可用）</label>
             <input type="checkbox" id="inmapcheck">
         </div>-->
 		
 		<div class="pla-control">
-			<label for="selectfilter">Select Filter:</label>
+			<label for="selectfilter">筛选条件：</label>
 			<select id="selectfilter">
-				<option value="is_shiny">Shiny Only</option>
-				<option value="is_square_shiny">Square Shiny Only</option>
-				<option value="is_alpha">Alpha Only</option>
-				<option value="is_perfect">6IV Only</option>
-				<option value="has_5ivs">5+IV Only</option>
-				<option value="no_attack">0 Attack IV Only</option>
-				<option value="has_no_attack_5iv_over_30">0 Attack IV, 5IV 30+ Only</option>
-				<option value="has_no_attack_5iv">0 Atk, 5IV Only</option>
-				<option value="no_speed">0 Speed IV Only</option>
-				<option value="has_no_speed_5iv_over_30">0 Speed IV, 5 IV 30+ Only</option>
-				<option value="has_no_speed_5iv">0 Speed IV, 5IV Only</option>
-				<option value="has_6iv_over_30">6 IVs 30+ Only</option>
-				<option value="has_5iv_over_30">5 IVs 30+ Only</option>
-				<option value="has_no_speed_no_attack">0 Speed and 0 Attack IV Only</option>
-				<option value="has_no_speed_no_attack_4iv_over_30">0 Speed and 0 Attack IV, 4IV 30+ Only</option>
-				<option value="has_no_speed_no_attack_4iv">0 Speed and 0 Attack IV, 4IV Only</option>
+				<option value="is_shiny">仅闪光</option>
+				<option value="is_square_shiny">仅方块闪光</option>
+				<option value="is_alpha">仅头目</option>
+				<option value="is_perfect">仅 6V</option>
+				<option value="has_5ivs">5V 及以上</option>
+				<option value="no_attack">0 攻击个体</option>
+				<option value="has_no_attack_5iv_over_30">0 攻击 + 5V（30 以上）</option>
+				<option value="has_no_attack_5iv">0 攻击 + 5V</option>
+				<option value="no_speed">0 速度个体</option>
+				<option value="has_no_speed_5iv_over_30">0 速度 + 5V（30 以上）</option>
+				<option value="has_no_speed_5iv">0 速度 + 5V</option>
+				<option value="has_6iv_over_30">6 项 30 以上</option>
+				<option value="has_5iv_over_30">5 项 30 以上</option>
+				<option value="has_no_speed_no_attack">0 速度 + 0 攻击</option>
+				<option value="has_no_speed_no_attack_4iv_over_30">0 速度 + 0 攻击，4V（30 以上）</option>
+				<option value="has_no_speed_no_attack_4iv">0 速度 + 0 攻击，4V</option>
 			</select>
 		</div>
 
         <div class="pla-control-actions">
-            <button class="pla-button pla-button-action" id="pla-button-checkmmos">Check MMO Seed</button>
+            <button class="pla-button pla-button-action" id="pla-button-checkmmos">检查大量出现种子</button>
         </div>
     </section>
 
     <section>
         <!--<div class="pla-control-spaced">
-            <label for="mmoShinyFilter">Shiny or Alpha</label>
+            <label for="mmoShinyFilter">闪光或头目</label>
             <input type="checkbox" id="mmoShinyOrAlphaFilter">
         </div>-->
 
         <div class="pla-control-spaced">
-            <label for="mmoShinyFilter">Results Filter: Shiny Only</label>
+            <label for="mmoShinyFilter">结果筛选：仅闪光</label>
             <input type="checkbox" id="mmoShinyFilter">
         </div>
 
         <div class="pla-control-spaced">
-            <label for="mmoAlphaFilter">Results Filter: Alpha Only</label>
+            <label for="mmoAlphaFilter">结果筛选：仅头目</label>
             <input type="checkbox" id="mmoAlphaFilter">
         </div>
 
         <div class="pla-control-spaced">
-            <label for="mmoDefaultRouteFilter">Results Filter: Show Default Paths Only</label>
+            <label for="mmoDefaultRouteFilter">结果筛选：仅默认路径</label>
             <input type="checkbox" id="mmoDefaultRouteFilter">
         </div>
 		
 		<div class="pla-control-spaced">
-            <label for="mmoDefaultRouteFilter">Results Filter: Show Multiple Shiny Paths Only</label>
+            <label for="mmoDefaultRouteFilter">结果筛选：仅多闪路径</label>
             <input type="checkbox" id="mmoMultiFilter">
         </div>
     </section>
@@ -201,20 +209,20 @@
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Shiny:</span> <span class="float -left" data-pla-results-shinysprite> <span class="float -right" data-pla-results-shiny></span></span></li>
-                <li><span class="pla-results-label">Alpha:</span> <span data-pla-results-alpha></span></li>
+                <li><span class="pla-results-label">闪光：</span> <span class="float -left" data-pla-results-shinysprite> <span class="float -right" data-pla-results-shiny></span></span></li>
+                <li><span class="pla-results-label">头目：</span> <span data-pla-results-alpha></span></li>
             </ul>
 
 			<ul class="pla-results-ul">
 				<li><span class="pla-results-label"><span data-pla-results-location></span></span></li>
 			</ul>
 			<ul class="pla-results-ul">
-				<span class="pla-results-label">Chained With: <span data-pla-info-chains></span></span>
+				<span class="pla-results-label">连锁：<span data-pla-info-chains></span></span>
 			</ul>
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Nature:</span> <span data-pla-results-nature></span></li>
-                <li><span class="pla-results-label">Gender:</span> <span data-pla-results-gender></span></li>
-                <li><span class="pla-results-label">Rolls:</span> <span data-pla-results-rolls></span></li>
+                <li><span class="pla-results-label">性格：</span> <span data-pla-results-nature></span></li>
+                <li><span class="pla-results-label">性别：</span> <span data-pla-results-gender></span></li>
+                <li><span class="pla-results-label">判定次数：</span> <span data-pla-results-rolls></span></li>
             </ul>
 
             <!--<ul class="pla-results-ul">
@@ -224,7 +232,7 @@
             </ul>-->
 
             <div class="pla-results-ivs-container">
-                <span class="pla-results-label">IVs:</span>
+                <span class="pla-results-label">个体值：</span>
                 <ul class="pla-results-ivs">
                     <li class="pla-results-ivs-hp" data-pla-results-ivs-hp></li>
                     <li class="pla-results-ivs-att" data-pla-results-ivs-att></li>
@@ -239,5 +247,6 @@
 {% endblock %}
 
 {% block script %}
+    <script type="module" src="{{ url_for('static', filename='js/import-seed.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/seeds.js') }}"></script>
 {% endblock %}

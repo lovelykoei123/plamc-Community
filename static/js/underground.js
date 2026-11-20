@@ -6,7 +6,7 @@ import {
   showModalMessage,
   clearMessages,
   clearModalMessages,
-  doSearch,
+  doSearchNS,
   showNoResultsFound,
   saveIntToStorage,
   readIntFromStorage,
@@ -20,6 +20,7 @@ import {
   setupIVBox,
   getSelectValues,
 } from "./modules/common.mjs";
+import { zhSpecies } from "./modules/zh-names.mjs";
 
 const resultTemplate = document.querySelector("[data-pla-results-template]");
 const wrapperTemplate = document.querySelector("[data-swsh-results-template]");
@@ -160,7 +161,7 @@ function openTab(evt, tabName) {
 
 $(function() {
 	$(".chosen-select").chosen({
-		no_results_text: "Oops, nothing found!",
+		no_results_text: "没有找到匹配项！",
 		inherit_select_classes: true
 	});
 	
@@ -265,7 +266,7 @@ function getOptions() {
 }
 
 function checkUnderground() {
-  doSearch(
+  doSearchNS(
     "/api/check-underground",
     results,
     getOptions(),
@@ -275,7 +276,7 @@ function checkUnderground() {
 }
 
 function checkUndergroundTest() {
-  doSearch(
+  doSearchNS(
     "/api/check-underground-test",
     results,
     getOptions(),
@@ -313,7 +314,7 @@ function showFilteredResults() {
   
   if (filteredResults.length > 0) {
     resultsArea.innerHTML =
-      "<section><h3>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</h3></section>";
+      "<section><h3>D = 消失。可以通过群战（性格强势的宝可梦）或惊吓（性格胆小的宝可梦）让多只宝可梦同时消失。</h3></section>";
     filteredResults.forEach((result) => showResult(result));
   } else {
     showNoResultsFound();
@@ -347,9 +348,9 @@ function showResult(result) {
 	
   if (result.shiny) {
     sparklesprite.src = "static/img/shiny.png";
-    sparkle = "Shiny!";
+    sparkle = "闪光！";
   } else {
-    sparkle = "Not Shiny";
+    sparkle = "非闪光";
   }
   resultContainer
     .querySelector("[data-pla-results-shinysprite]")
@@ -372,9 +373,9 @@ function showResult(result) {
   }
   
   const genderStrings = {
-  male: "Male <i class='fa-solid fa-mars' style='color:blue'/>",
-  female: "Female <i class='fa-solid fa-venus' style='color:pink'/>",
-  genderless: "Genderless <i class='fa-solid fa-genderless'/>",
+  male: "雄性 <i class='fa-solid fa-mars' style='color:blue'/>",
+  female: "雌性 <i class='fa-solid fa-venus' style='color:pink'/>",
+  genderless: "无性别 <i class='fa-solid fa-genderless'/>",
   };
 
   resultContainer.querySelector("[data-pla-results-gender]").innerHTML =
@@ -423,7 +424,7 @@ function showFilteredResultsTest() {
   
   if (filteredResults.length > 0) {
     resultsArea.innerHTML =
-      "<section><h3>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</h3></section>";
+      "<section><h3>D = 消失。可以通过群战（性格强势的宝可梦）或惊吓（性格胆小的宝可梦）让多只宝可梦同时消失。</h3></section>";
     filteredResults.forEach((result) => showResultTest(result));
   } else {
     showNoResultsFound();
@@ -467,9 +468,9 @@ function showResultTest(results) {
 		
 	  if (result.shiny) {
 		sparklesprite.src = "static/img/shiny.png";
-		sparkle = "Shiny!";
+		sparkle = "闪光！";
 	  } else {
-		sparkle = "Not Shiny";
+		sparkle = "非闪光";
 	  }
 	  resultContainer
 		.querySelector("[data-pla-results-shinysprite]")
@@ -492,9 +493,9 @@ function showResultTest(results) {
 	  }
 	  
 	  const genderStrings = {
-	  male: "Male <i class='fa-solid fa-mars' style='color:blue'/>",
-	  female: "Female <i class='fa-solid fa-venus' style='color:pink'/>",
-	  genderless: "Genderless <i class='fa-solid fa-genderless'/>",
+	  male: "雄性 <i class='fa-solid fa-mars' style='color:blue'/>",
+	  female: "雌性 <i class='fa-solid fa-venus' style='color:pink'/>",
+	  genderless: "无性别 <i class='fa-solid fa-genderless'/>",
 	  };
 
 	 const wtf = wrapperContainer.firstElementChild

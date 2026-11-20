@@ -10,6 +10,7 @@ import {
   showPokemonHiddenInformation,
   initializeApp,
 } from "./modules/common.mjs";
+import { zhSpecies, zhMap, zhGroup } from "./modules/zh-names.mjs";
 
 const resultTemplate = document.querySelector("[data-pla-results-template]");
 const resultsArea = document.querySelector("[data-pla-results]");
@@ -18,7 +19,7 @@ const mapSpawnsArea = document.querySelector("[data-pla-info-spawns]");
 
 // options
 const mapSelect = document.getElementById("mapSelect");
-const inMapCheckbox = document.getElementById("mmoInMap");
+// const inmapCheck = document.getElementById("inmapcheck");
 
 // filters
 const distShinyOrAlphaCheckbox = document.getElementById(
@@ -60,7 +61,6 @@ const results = [];
 // Save and load user preferences
 function loadPreferences() {
   mapSelect.value = localStorage.getItem("mmo-mapSelect") ?? "0";
-  inMapCheckbox.checked = document.getElementById("mmoInMap", false);
   distAlphaCheckbox.checked = readBoolFromStorage("mmoAlphaFilter", false);
   distShinyCheckbox.checked = readBoolFromStorage("mmoShinyFilter", false);
   distShinyOrAlphaCheckbox.checked = readBoolFromStorage(
@@ -150,14 +150,16 @@ function filter(
     return false;
   }
 
-  if (
-    speciesFilter.length != 0 &&
-    !result.species.toLowerCase().includes(speciesFilter.toLowerCase())
-  ) {
-    return false;
+  if (speciesFilter.length != 0) {
+    // 中英文名称都可以用来筛选
+    const needle = speciesFilter.toLowerCase();
+    const haystack = (result.species + " " + zhSpecies(result.species)).toLowerCase();
+    if (!haystack.includes(needle)) return false;
   }
 
-  if (multiFilter && !result.multi) {
+  // 同 seeds.js：result.multi 要等 showResult() 渲染才被置 true，
+  // 先勾「仅多闪路径」再搜索会全被过滤掉，所以直接看 chains。
+  if (multiFilter && (!Array.isArray(result.chains) || result.chains.length == 0)) {
     return false;
   }
 
@@ -167,7 +169,7 @@ function filter(
 function getOptions() {
   return {
     mapname: parseInt(mapSelect.value),
-    inmap: inMapCheckbox.checked
+    //	inmap: inmapCheck.checked
   };
 }
 
@@ -181,7 +183,7 @@ function readMaps() {
       console.log(error);
       showMessage(
         MESSAGE_ERROR,
-        "There was an error loading MMO information. Try restarting the program and clicking 'Refresh Maps'"
+        "加载大量出现信息时出错。请尝试重启程序，然后点击「刷新地图」"
       );
 
       checkOneMapButton.disabled = true;
@@ -201,24 +203,24 @@ function showMaps({ maps, outbreaks }) {
       validMaps++;
 
       let mapSelectItem = document.createElement("option");
-      mapSelectItem.textContent = location;
+      mapSelectItem.textContent = zhMap(location);
       mapSelectItem.value = index;
       mapSelect.append(mapSelectItem);
 
       let locListItem = document.createElement("li");
-      locListItem.textContent = `${index} - ${location}`;
+      locListItem.textContent = `${index} - ${zhMap(location)}`;
       mapLocationsArea.appendChild(locListItem);
     }
   });
 
   if (validMaps == 0) {
     let mapSelectItem = document.createElement("option");
-    mapSelectItem.textContent = "No MMOs";
+    mapSelectItem.textContent = "没有大量出现";
     mapSelectItem.value = "-1";
     mapSelect.append(mapSelectItem);
 
     let locListItem = document.createElement("li");
-    locListItem.textContent = "No MMOs Active";
+    locListItem.textContent = "当前没有生效的大量出现";
     mapLocationsArea.appendChild(locListItem);
 
     checkOneMapButton.disabled = true;
@@ -230,7 +232,7 @@ function showMaps({ maps, outbreaks }) {
 
   if (outbreaks.length == 0) {
     const el = document.createElement("li");
-    el.textContent = "None";
+    el.textContent = "无";
     mapSpawnsArea.appendChild(el);
     checkOutbreaksButton.disabled = true;
   } else {
@@ -239,7 +241,7 @@ function showMaps({ maps, outbreaks }) {
 
   outbreaks.forEach((pokemon) => {
     let spawnItem = document.createElement("li");
-    spawnItem.textContent = pokemon;
+    spawnItem.textContent = zhSpecies(pokemon);
     mapSpawnsArea.appendChild(spawnItem);
   });
 }
@@ -298,7 +300,7 @@ function showFilteredResults() {
 
   if (filteredResults.length > 0) {
     resultsArea.innerHTML =
-      "<section><h3>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</h3></section>";
+      "<section><h3>D = 消失。可以通过群战（性格强势的宝可梦）或惊吓（性格胆小的宝可梦）让多只宝可梦同时消失。</h3></section>";
     filteredResults.forEach((result) => showResult(result));
   } else {
     showNoResultsFound();
@@ -309,16 +311,16 @@ function showResult(result) {
   const resultContainer = resultTemplate.content.cloneNode(true);
 
   let indexprefix = "";
-  let chainprefix = "N/A";
+  let chainprefix = "不适用";
 
   const isMMO = result.hasOwnProperty("chains");
   if (isMMO) {
     if (result.chains.length == 0) {
-      indexprefix = "Single Shiny Path: <p>" + result.index;
-      chainprefix = "No Additional Shinies On Path";
+      indexprefix = "单闪路径：<p>" + result.index;
+      chainprefix = "该路径上没有其他闪光";
     } else {
       indexprefix =
-        "Multiple Shiny Path (Complete for more than one Shiny): <p>" +
+        "多闪路径（完成可得到不止一只闪光）：<p>" +
         result.index;
       chainprefix = result.chains;
       result.multi = true;
@@ -346,30 +348,34 @@ function showResult(result) {
     chainprefix;
   resultContainer.querySelector("[data-pla-results-dupes]").innerText = isMMO
     ? result.dupes
-    : "N/A";
+    : "不适用";
 
   resultContainer.querySelector("[data-pla-results-location]").innerHTML =
     indexprefix;
 
   resultContainer.querySelector("[data-pla-results-group]").innerText =
-    result.group;
+    zhGroup(result.group);
   resultContainer.querySelector("[data-pla-results-numspawns]").innerText =
     result.numspawns;
   resultContainer.querySelector("[data-pla-results-mapname]").innerText =
-    result.mapname;
+    zhMap(result.mapname);
 
   showPokemonInformation(resultContainer, result);
   showPokemonHiddenInformation(resultContainer, result);
   showPokemonIVs(resultContainer, result);
 
   let button = document.createElement("button");
-  button.innerText = "Teleport to Spawn";
+  button.innerText = "传送到生成点";
   button.classList.add("pla-button", "pla-button-action");
   button.addEventListener("click", () => teleportToSpawn(result.coords));
 
   resultContainer.querySelector(".pla-results-teleport").appendChild(button);
 
   resultsArea.appendChild(resultContainer);
+}
+
+function convertCoords(coordinates) {
+  return [coordinates[2] * -0.5, coordinates[0] * 0.5];
 }
 
 function teleportToSpawn(coords) {

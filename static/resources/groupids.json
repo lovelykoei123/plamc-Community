@@ -35,6 +35,21 @@
 		"parent_id": 0
 	},
 	{
+		"id": "234",
+		"name": "Obsidian Fieldlands Beautifly/Mothim (Dustox/Mothim @ Night)",
+		"parent_id": 0
+	},
+	{
+		"id": "246",
+		"name": "Obsidian Fieldlands Starly/Staravia",
+		"parent_id": 0
+	},
+	{
+		"id": "247",
+		"name": "Obsidian Fieldlands Aipom",
+		"parent_id": 0
+	},
+	{
 		"id": "253",
 		"name": "Obsidian Fieldlands Shellos/Gastrodon (West Sea)",
 		"parent_id": 0
@@ -42,6 +57,16 @@
 	{
 		"id": "273",
 		"name": "Obsidian Fieldlands Abra/Kadabra",
+		"parent_id": 0
+	},
+	{
+		"id": "278",
+		"name": "Obsidian Fieldlands Luxray",
+		"parent_id": 0
+	},
+	{
+		"id": "279",
+		"name": "Obsidian Fieldlands Staraptor",
 		"parent_id": 0
 	},
 	{
@@ -55,6 +80,26 @@
 		"parent_id": 0
 	},
 	{
+		"id": "91",
+		"name": "Crimson Mirelands Croagunk",
+		"parent_id": 0
+	},
+	{
+		"id": "117",
+		"name": "Crimson Mirelands Hippopotas/Hippowdon",
+		"parent_id": 0
+	},
+	{
+		"id": "182",
+		"name": "Crimson Mirelands Paras/Parasect",
+		"parent_id": 0
+	},
+	{
+		"id": "382",
+		"name": "Crimson Mirelands Kricketune",
+		"parent_id": 0
+	},
+	{
 		"id": "390",
 		"name": "Crimson Mirelands Combee",
 		"parent_id": 0
@@ -65,13 +110,43 @@
 		"parent_id": 0
 	},
 	{
+		"id": "161",
+		"name": "Cobalt Coastlands Murkrow (Night Only)",
+		"parent_id": 0
+	},
+	{
+		"id": "267",
+		"name": "Cobalt Coastlands Tentacool/Tentacruel",
+		"parent_id": 0
+	},
+	{
 		"id": "344",
 		"name": "Cobalt Coastlands Basculin",
 		"parent_id": 0
 	},
 	{
+		"id": "356",
+		"name": "Cobalt Coastlands Glameow/Purugly",
+		"parent_id": 0
+	},
+	{
+		"id": "362",
+		"name": "Cobalt Coastlands Qwilfish",
+		"parent_id": 0
+	},
+	{
+		"id": "56",
+		"name": "Coronet Highlands Teddiursa/Ursaring",
+		"parent_id": 0
+	},
+	{
 		"id": "245",
 		"name": "Alabaster Icelands Swinub/Piloswine",
+		"parent_id": 0
+	},
+	{
+		"id": "203",
+		"name": "Alabaster Icelands Rufflet",
 		"parent_id": 0
 	}
 ]

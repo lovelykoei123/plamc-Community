@@ -1,28 +1,13 @@
 import {
-    doSearchSWSH,
-    DEFAULT_MAP,
-    MESSAGE_ERROR,
-    MESSAGE_INFO,
-    showMessage,
-    showModalMessage,
-    clearMessages,
-    clearModalMessages,
-    doSearch,
-    showNoResultsFoundSWSH,
+    doSearchNS,
     showNoResultsFound,
-    saveIntToStorage,
-    readIntFromStorage,
-    saveBoolToStorage,
-    readBoolFromStorage,
     setupExpandables,
     showPokemonIVs,
-    showPokemonInformation,
     showPokemonHiddenInformation,
-    initializeApp,
     getSelectValues,
     setupIVBox,
-    setivVal,
   } from "./modules/common.mjs";
+import { zhSpecies } from "./modules/zh-names.mjs";
   
   const resultTemplate = document.querySelector("[data-pla-results-template]");
   const resultsArea = document.querySelector("[data-pla-results]");
@@ -59,7 +44,6 @@ import {
   const distSelectFilter = document.getElementById("selectfilter");
   const natureSelect = document.getElementById("naturefilter");
   const genderSelect = document.getElementById("genderfilter");
-  const SlotSelect = document.getElementById("slotfilter");
   const distShinyCheckbox = document.getElementById("mmoShinyFilter");  
   
   //pokemon parsing
@@ -67,22 +51,11 @@ import {
   const encType = document.getElementById("type");
   const encLoc = document.getElementById("location");
   const encSpecies = document.getElementById("species");
-  const weatherActive = document.getElementById("weatheractive");
-  const KOs = document.getElementById("kos");
-  const minSlot = document.getElementById("minslot");
-  const maxSlot = document.getElementById("maxslot");
-  const minLevel = document.getElementById("minlevel");
-  const maxLevel = document.getElementById("maxlevel");
-  const emCount = document.getElementById("emcount");
-  const heldItem = document.getElementById("helditem");
-  const flawlessIVs = document.getElementById("flawlessivs");
-  const shinyLock = document.getElementById("shinylock");
-  const setGender = document.getElementById("setgender");
   
   
   encType.addEventListener("change", populateLocation);
   encLoc.addEventListener("change", populateSpecies);
-  encSpecies.addEventListener("change", populateOptions);
+  encSpecies.addEventListener("change", setFilter)
   
   const checkOwButton = document.getElementById("pla-button-checkwild");
   checkOwButton.addEventListener("click", checkOverworld);
@@ -97,8 +70,6 @@ import {
   loadPreferences();
   setupPreferenceSaving();
   setupExpandables();
-  setupTabs();
-  setupTabsRes();
   populateLocation();
   setupIVBox();
   populateGame();
@@ -108,44 +79,38 @@ import {
   var Safari = false;
   var rock = false;
 
-  var synclead = '<option value="Hardy">Hardy</option>'+
-  '<option value="Lonely">Lonely</option>'+
-  '<option value="Brave">Brave</option>'+
-  '<option value="Adamant">Adamant</option>'+
-  '<option value="Naughty">Naughty</option>'+
-  '<option value="Bold">Bold</option>'+
-  '<option value="Docile">Docile</option>'+
-  '<option value="Relaxed">Relaxed</option>'+
-  '<option value="Impish">Impish</option>'+
-  '<option value="Lax">Lax</option>'+
-  '<option value="Timid">Timid</option>'+
-  '<option value="Hasty">Hasty</option>'+
-  '<option value="Serious">Serious</option>'+
-  '<option value="Jolly">Jolly</option>'+
-  '<option value="Naive">Naive</option>'+
-  '<option value="Modest">Modest</option>'+
-  '<option value="Mild">Mild</option>'+
-  '<option value="Quiet">Quiet</option>'+
-  '<option value="Bashful">Bashful</option>'+
-  '<option value="Rash">Rash</option>'+
-  '<option value="Calm">Calm</option>'+
-  '<option value="Gentle">Gentle</option>'+
-  '<option value="Sassy">Sassy</option>'+
-  '<option value="Careful">Careful</option>'+
-  '<option value="Quirky">Quirky</option>'
+  var synclead = '<option value=0>勤奋</option>'+
+  '<option value=1>怕寂寞</option>'+
+  '<option value=2>勇敢</option>'+
+  '<option value=3>固执</option>'+
+  '<option value=4>顽皮</option>'+
+  '<option value=5>大胆</option>'+
+  '<option value=6>坦率</option>'+
+  '<option value=7>悠闲</option>'+
+  '<option value=8>淘气</option>'+
+  '<option value=9>乐天</option>'+
+  '<option value=10>胆小</option>'+
+  '<option value=11>急躁</option>'+
+  '<option value=12>认真</option>'+
+  '<option value=13>爽朗</option>'+
+  '<option value=14>天真</option>'+
+  '<option value=15>内敛</option>'+
+  '<option value=16>慢吞吞</option>'+
+  '<option value=17>冷静</option>'+
+  '<option value=18>害羞</option>'+
+  '<option value=19>马虎</option>'+
+  '<option value=20>温和</option>'+
+  '<option value=21>温顺</option>'+
+  '<option value=22>自大</option>'+
+  '<option value=23>慎重</option>'+
+  '<option value=24>浮躁</option>'
   
-  var cutelead = '<option value="31f">&#9794; Lead, 12.5% &#9792; Target</option>'+
-  '<option value="31m">&#9792; Lead, 87.5% &#9794; Target</option>'+
-  '<option value="63f">&#9794; Lead, 25% &#9792; Target</option>'+
-  '<option value="63m">&#9792; Lead, 75% &#9794; Target</option>'+
-  '<option value="127f">&#9794; Lead, 50% &#9792; Target</option>'+
-  '<option value="127m">&#9792; Lead, 50% &#9794; Target</option>'+
-  '<option value="191f">&#9794; Lead, 75% &#9792; Target</option>'+
-  '<option value="191m">&#9792; Lead, 25% &#9794; Target</option>'+
+  var cutelead = '<option value=25>&#9794; 首发</option>'+
+  '<option value=26>&#9792; 首发</option>'+
   
   $(function() {
       $(".chosen-select").chosen({
-          no_results_text: "Oops, nothing found!",
+          no_results_text: "没有找到匹配项！",
           inherit_select_classes: true
       });
       
@@ -180,7 +145,6 @@ import {
     secretID.value = localStorage.getItem("sid") ?? 0;
     natureSelect.value = "any";
     genderSelect.value = 50;
-    SlotSelect.value = "any";
     Delay.value = 0;
     seed.value = 0;
     
@@ -196,65 +160,6 @@ import {
     secretID.addEventListener("change", (e) =>
       localStorage.setItem("sid", e.target.value)
     );
-  }
-  
-  function setupTabs() {
-    document.querySelectorAll(".tablinks").forEach((element) => {
-      element.addEventListener("click", (event) =>
-        openTab(event, element.dataset.swshTabFor)
-      );
-    });
-  }
-  
-  function setupTabsRes() {
-    document.querySelectorAll(".reslinks").forEach((element) => {
-      element.addEventListener("click", (event) =>
-        openTabRes(event, element.dataset.plaTabFor)
-      );
-    });
-  }
-  
-  function openTab(evt, tabName) {
-    let i, tabcontent, tablinks;
-  
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
-    }
-  
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-  
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-  }
-  
-  function openTabRes(evt, tabName) {
-    let i, tabcontent, tablinks;
-  
-    tabcontent = document.getElementsByClassName("tabcontentres");
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
-    }
-  
-    tablinks = document.getElementsByClassName("reslinks");
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-  
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-  }
-  
-  function stringToBits(string) {
-      let bits = [];
-      let i = 0;
-      for (i=0; i < string.length; i++) {
-          bits.push(parseInt(string[i]));
-      }
-      return bits;
   }
   
   function setFilter(event) {
@@ -284,65 +189,29 @@ import {
           genderFilter != 50
       ) {
           console.log("Filter is not any, checking:");
-          console.log("Filer is: ", genderFilter);
           if (
           genderFilter == 0 &&
-          !(result.gender == "Male")
+          !(result.gender == 0)
           ){
               console.log("Gender Result not male, male filter selected");
           return false;
           }
-          else if ( genderFilter == 1 && !(result.gender == "Female")) {
+          else if ( genderFilter == 1 && !(result.gender == 1)) {
               console.log("Gender Result not female, female filter selected");
               return false;
           }
-          else if ( genderFilter == 2 && !(result.gender == "Genderless")){
-              console.log("Gender Result not genderless, genderless filter selected")
-              return false;
+          else if ( genderFilter == 2 && !(result.gender == 2)) {
+            console.log("Gender Result not genderless, genderless filter selected");
+            return false;
           }
       }
-    
         if (
-            !slotFilter.includes("any") &&
-            !slotFilter.includes(result.slot.toString())
+            !(slotFilter == "any") &&
+            !(slotFilter == result.species)
         ) {
             return false;
         }
-
     return true;
-  }
-  
-  function addMotionPhys() {
-      addMotion("0");
-  }
-  
-  function addMotionSpec() {
-      addMotion("1");
-  }
-  
-  function addMotion(val) {
-      if (document.getElementById("motions").value.length < 128) {
-          document.getElementById("motions").value += val;
-          updateCount();
-      }
-  }
-  
-  function updateCount() {
-      document.getElementById("count").innerText = ("000"+document.getElementById("motions").value.length.toString(10)).slice(-3);
-  }
-  
-  function UpdateSidebar() {
-      
-      document.getElementById("inputseed0").value = document.querySelector("[data-updated-s0]").innerText;
-      document.getElementById("inputseed1").value = document.querySelector("[data-updated-s1]").innerText;
-      
-  }
-  
-  function UpdateState() {
-      
-      document.getElementById("inputseed0").value = document.getElementById("data-s0").value;
-      document.getElementById("inputseed1").value = document.getElementById("data-s1").value;
-      
   }
   
   function getOptions() {
@@ -353,7 +222,7 @@ import {
       sid: secretID.value,
       method: parseInt(method.value),
       lead: lead.value,
-      syncnature: leadopt.value,
+      syncnature: parseInt(leadopt.value),
       filter: {
         minadv: parseInt(minAdv.value),
         maxadv: parseInt(maxAdv.value),
@@ -361,9 +230,9 @@ import {
           maxivs: [parseInt(maxHP.value), parseInt(maxATK.value), parseInt(maxDEF.value), parseInt(maxSPA.value), parseInt(maxSPD.value), parseInt(maxSPE.value)],
       },
       info: {
-          version: gameVer.value,
-          type: encType.value,
-          loc: encLoc.value,
+          version: parseInt(gameVer.value),
+          type: parseInt(encType.value),
+          loc: parseInt(encLoc.value),
           species: encSpecies.value,
       },
       safari:Safari,
@@ -372,48 +241,26 @@ import {
     };
   }
   
-  function getSeedOptions() {
-      return {
-          motions: stringToBits(motions.value),
-      };
-  }
-  
-  function getSeedUpdateOptions() {
-      return {
-          s0: document.getElementById("data-s0").value,
-          s1: document.getElementById("data-s1").value,
-          motions: motionsUpdate.value,
-          min: parseInt(startingAdvance.value),
-          max: parseInt(maxAdvance.value),
-      };
-  }
 
   function populateGame(){
-    if (gameVer.value != "e"){
+    if (gameVer.value != 2){
         lead.value = "None";
         populateLeads();
         if (!lead.diabled){
             lead.disabled = true;
-        }
-        if ((gameVer.value == "fr") || (gameVer.value == "lg")){
-            rock = true;
-        }
-        else{
-            rock = false;
         }
     }
     else {
         if (lead.disabled){
             lead.disabled = false;
         }
-        rock = false;
     }
     populateLocation();
   }
   
   function populateLocation() {
       
-      var options = { type: encType.value, version: gameVer.value }
+      var options = { type: encType.value, version: parseInt(gameVer.value) }
       fetch("/api/g3-pop-location", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -423,8 +270,8 @@ import {
       .then((res) => {
           console.log(res)
           var html_code = '';
-          var species_code = '<option value="">Select Species</option>';
-          html_code += '<option value="MAP_ROUTE111">Select Location:</option>';
+          var species_code = '<option value="">选择宝可梦</option>';
+          html_code += '<option value=0>选择地点：</option>';
           res.results.forEach((loc) => {
               html_code += '<option value="' + loc.rawloc + '">' + loc.location + '</option>';
           });
@@ -434,29 +281,8 @@ import {
       })
   }
   
-  function populateWeather() {
-      var options = { type: encType.value, loc: encLoc.value, version: gameVer.value }
-      fetch("/api/pop-weather", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(options),
-    })
-      .then((response) => response.json())
-      .then((res) => {
-          var html_code = '';
-          var species_code = '<option value="">Select Species</option>';
-          html_code += '<option value="">Select Weather:</option>';
-          res.results.forEach((wea) => {
-              html_code += '<option value="' + wea + '">' + wea + '</option>';
-          });
-          encWeather.innerHTML = html_code;
-          encSpecies.innerHTML = species_code;
-          
-      })
-  }
-  
   function populateSpecies() {
-      var options = { type: encType.value, location: encLoc.value, version: gameVer.value }
+      var options = { type: parseInt(encType.value), location: parseInt(encLoc.value), version: parseInt(gameVer.value) }
       fetch("/api/g3-pop-species", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -465,9 +291,9 @@ import {
       .then((response) => response.json())
       .then((res) => {
           var html_code = '';
-          html_code += '<option value="">Select Species:</option>';
+          html_code += '<option value="any">任意宝可梦：</option>';
           res.results.forEach((loc) => {
-              html_code += '<option value="' + loc.raws + '">' + loc.species + '</option>';
+              html_code += '<option value="' + loc.raws + '">' + zhSpecies(loc.species) + '</option>';
           });
           encSpecies.innerHTML = html_code;
 
@@ -478,51 +304,6 @@ import {
           else {
             Safari = false;
           }
-      })
-  }
-  
-  
-  function populateOptions() {
-      var options = { type: encType.value, location: encLoc.value, version: gameVer.value, species: encSpecies.value }
-      fetch("/api/g3-autofill", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(options),
-    })
-      .then((response) => response.json())
-      .then((res) => {
-          /*
-          res.results.forEach((slot) => {
-            SlotSelect.value += slot.toString();
-          });
-        console.log(getSelectValues(SlotSelect))
-        */
-        var element = SlotSelect
-
-        // Set Values
-        var values = res.results;
-        console.log("Values:", values);
-        /*
-        for (var i = 0; i < element.options.length; i++) {
-            console.log("Element Value: ",element.options[i].value, "Eval: ",values.toString().indexOf(element.options[i].value));
-            element.options[i].selected = values.toString().indexOf(element.options[i].value) >= 0;
-        }*/
-        for (var i=0; i < element.options.length; i++){
-            element.options[i].selected = false;
-        }
-
-        for (var p = 0; p < values.length; p++){
-            element.options[values[p]+1].selected = true;
-        }
-
-        console.log(element.selectedOptions)
-
-        // Get Value
-        var selectedItens = Array.from(element.selectedOptions).map(option => option.value);
-
-        selectedItens.innerHTML = selectedItens;
-        $('#slotfilter').trigger("chosen:updated");
-        showFilteredResults();
       })
   }
 
@@ -536,10 +317,16 @@ import {
         }
     }
     else if (lead.value == "None"){
-        leadopt.innerHTML = '<option value="None">None</option>';
+        leadopt.innerHTML = '<option value=255>None</option>';
         if (!leadopt.disabled){
             leadopt.disabled = true;
         }
+    }
+    else if ((lead.value == "Pressure") || (lead.value == "Hustle") || (lead.value == "Vital Spirit")){
+      leadopt.innerHTML = '<option value=32>None</option>';
+      if (!leadopt.disabled){
+          leadopt.disabled = true;
+      }
     }
     else{
         leadopt.innerHTML = cutelead;
@@ -551,40 +338,13 @@ import {
   }
   
   function checkOverworld() {
-    doSearch("/api/g3-check-wilds", results, getOptions(), showFilteredResults, checkOwButton);
-  }
-  
-  function findSWSHSeed() {
-      
-      const options = getSeedOptions();
-      
-      fetch("/api/find-swsh-seed", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(options),
-    })
-      .then((response) => response.json())
-      .then((res) => showSeedInfo(res))
-  }
-  
-  function UpdateSeed() {
-      
-      const options = getSeedUpdateOptions();
-      
-      fetch("/api/update-swsh-seed", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(options),
-    })
-      .then((response) => response.json())
-      .then((res) => showSeedUpdateInfo(res))
-      .catch((error) => {});
+    doSearchNS("/api/g3-check-wilds", results, getOptions(), showFilteredResults, checkOwButton);
   }
   
   function showFilteredResults() {
     let natureFilter = getSelectValues(natureSelect);
     let shinyFilter = distShinyCheckbox.checked;
-    let slotFilter = getSelectValues(SlotSelect);
+    let slotFilter = encSpecies.value;
     let genderfilter = genderSelect.value;
 
     console.log("NatureFilter:", natureFilter);
@@ -605,7 +365,7 @@ import {
     
     if (filteredResults.length > 0) {
       resultsArea.innerHTML =
-        "<section><h3>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</h3></section>";
+        "<section><h3>D = 消失。可以通过群战（性格强势的宝可梦）或惊吓（性格胆小的宝可梦）让多只宝可梦同时消失。</h3></section>";
       filteredResults.forEach((result) => showResult(result));
     } else {
       showNoResultsFound();
@@ -639,13 +399,13 @@ import {
       
     if (result.square) {
         sparklesprite.src = "static/img/square.png";
-        sparkle = "Square Shiny!";
+        sparkle = "方块闪光！";
     }
     else if (result.shiny) {
       sparklesprite.src = "static/img/shiny.png";
-      sparkle = "Shiny!";
+      sparkle = "闪光！";
     } else {
-      sparkle = "Not Shiny";
+      sparkle = "非闪光";
     }
     resultContainer
       .querySelector("[data-pla-results-shinysprite]")
@@ -656,8 +416,6 @@ import {
   
     resultContainer.querySelector("[data-pla-results-adv]").textContent =
       result.adv;
-    resultContainer.querySelector("[data-pla-results-slot]").textContent =
-      result.slot;
     resultContainer.querySelector("[data-pla-results-hptype]").textContent =
       result.hidden;
     resultContainer.querySelector("[data-pla-results-hppow]").textContent =
@@ -667,14 +425,23 @@ import {
     resultContainer.querySelector("[data-pla-results-nature]").textContent =
       result.nature;
     
+    let gender = "male"
+    if (result.gender == 1){
+      gender = "female"
+    }
+    else if (result.gender == 2)
+    {
+      gender = "genderless"
+    }
+    
     const genderStrings = {
-    Male: "Male <i class='fa-solid fa-mars' style='color:blue'/>",
-    Female: "Female <i class='fa-solid fa-venus' style='color:pink'/>",
-    Genderless: "Genderless <i class='fa-solid fa-genderless'/>",
+    male: "雄性 <i class='fa-solid fa-mars' style='color:blue'/>",
+    female: "雌性 <i class='fa-solid fa-venus' style='color:pink'/>",
+    genderless: "无性别 <i class='fa-solid fa-genderless'/>",
     };
   
     resultContainer.querySelector("[data-pla-results-gender]").innerHTML =
-      genderStrings[result.gender];
+      genderStrings[gender];
   
     resultContainer.querySelector("[data-pla-results-ability]").textContent =
       result.ability;

@@ -11,6 +11,22 @@ import {
   showPokemonGender,
   initializeApp,
 } from "./modules/common.mjs";
+import { zhSpecies } from "./modules/zh-names.mjs";
+
+// 球种中文对照
+const BALL_ZH = {
+  "Apricorn Ball": "球果球",
+  "Shop Ball 1": "商店球 1",
+  "Shop Ball 2": "商店球 2",
+  "Great Ball": "超级球",
+  "Pokeball": "精灵球",
+};
+
+function zhBall(ball) {
+  if (typeof ball !== "string") return ball;
+  return BALL_ZH[ball] || ball;
+}
+
 
 const resultTemplate = document.querySelector("[data-swsh-results-cram-template]");
 const resultsArea = document.querySelector("[data-swsh-results]");
@@ -22,6 +38,7 @@ const seed1 = document.getElementById("inputseed1");
 const npcCount = document.getElementById("npccount");
 const distSportorSafari = document.getElementById("sportorsafari");
 const distBonusCount = document.getElementById("bonuscount");
+const distApricorn = document.getElementById("apricorn");
 const trainerID = document.getElementById("tid");
 const motionsUpdate = document.getElementById("seedupdate");
 const startingAdvance = document.getElementById("startingadvance");
@@ -176,6 +193,7 @@ function getOptions() {
     filter: {
 		isSafariSport: distSportorSafari.checked,
 		isBonusCount: distBonusCount.checked,
+		isApricorn: distApricorn.checked,
     },
   };
 }
@@ -283,15 +301,58 @@ function showSeedUpdateInfo(result) {
 	
 function showResult(result) {
   const resultContainer = resultTemplate.content.cloneNode(true);
+  
 
+  let resultBall = resultContainer.querySelector("[data-swsh-results-balltype]");
+  resultBall.innerText = result.isSafariSport ? "竞赛球或狩猎球" : zhBall(result.balltype);
+  let goodball = false;
+  if (result.isSafariSport || result.balltype == "Apricorn Ball") {
+	  goodball = true;
+  }
+  resultBall.classList.toggle("swsh-result-true", goodball);
+  resultBall.classList.toggle("swsh-result-false", !goodball);
+  
+  let resultAlpha = resultContainer.querySelector("[data-swsh-results-isbonuscount]");
+  resultAlpha.textContent = result.bonus ? "有额外奖励！" : "无额外奖励";
+  resultAlpha.classList.toggle("swsh-result-true", result.bonus);
+  resultAlpha.classList.toggle("swsh-result-false", !result.bonus);
+  
   resultContainer.querySelector("[data-swsh-results-adv]").innerText =
     result.adv;
-  resultContainer.querySelector("[data-swsh-results-issportsafari]").innerText =
-    result.sportsafari;
-  resultContainer.querySelector("[data-swsh-results-isbonuscount]").innerText =
-    result.bonus;
   resultContainer.querySelector("[data-swsh-results-menuadv]").innerText =
     result.menu_adv;
+  resultContainer.querySelector("[data-swsh-results-total]").innerText =
+    result.total;
+	
+
+	//results area for next and prev advances
+  let prevresultBall = resultContainer.querySelector("[data-swsh-results-prev-balltype]");
+  prevresultBall.innerText = result.prev.isSafariSport ? "竞赛球或狩猎球" : zhBall(result.prev.balltype);
+  let prevgoodball = false;
+  if (result.prev.isSafariSport || result.prev.balltype == "Apricorn Ball") {
+	  prevgoodball = true;
+  }
+  prevresultBall.classList.toggle("swsh-result-true", prevgoodball);
+  prevresultBall.classList.toggle("swsh-result-false", !prevgoodball);
+  
+  let prevresultAlpha = resultContainer.querySelector("[data-swsh-results-prev-isbonuscount]");
+  prevresultAlpha.textContent = result.prev.isBonusCount ? "有额外奖励！" : "无额外奖励";
+  prevresultAlpha.classList.toggle("swsh-result-true", result.prev.isBonusCount);
+  prevresultAlpha.classList.toggle("swsh-result-false", !result.prev.isBonusCount);
+  
+  let nextresultBall = resultContainer.querySelector("[data-swsh-results-next-balltype]");
+  nextresultBall.textContent = result.next.isSafariSport ? "竞赛球或狩猎球" : zhBall(result.next.balltype);
+  let nextgoodball = false;
+  if (result.next.isSafariSport || result.next.balltype == "Apricorn Ball") {
+	  nextgoodball = true;
+  }
+  nextresultBall.classList.toggle("swsh-result-true", nextgoodball);
+  nextresultBall.classList.toggle("swsh-result-false", !nextgoodball);
+  
+  let nextresultAlpha = resultContainer.querySelector("[data-swsh-results-next-isbonuscount]");
+  nextresultAlpha.textContent = result.next.isBonusCount ? "有额外奖励！" : "无额外奖励";
+  nextresultAlpha.classList.toggle("swsh-result-true", result.next.isBonusCount);
+  nextresultAlpha.classList.toggle("swsh-result-false", !result.next.isBonusCount);
 
   resultsArea.appendChild(resultContainer);
 }
@@ -305,6 +366,28 @@ function showResultLotto(result) {
     result.menu_adv;
   resultContainer.querySelector("[data-swsh-results-lotto]").innerText =
     result.lotto;
+  resultContainer.querySelector("[data-swsh-results-total]").innerText =
+    result.total;
+	
+//prev results
+  resultContainer.querySelector("[data-swsh-results-prev-adv]").innerText =
+    result.prev.adv;
+  resultContainer.querySelector("[data-swsh-results-prev-menuadv]").innerText =
+    result.prev.menu_advances;
+  resultContainer.querySelector("[data-swsh-results-prev-lotto]").innerText =
+    result.prev.lotto;
+  resultContainer.querySelector("[data-swsh-results-prev-total]").innerText =
+    result.prev.total;
+	
+//next results
+  resultContainer.querySelector("[data-swsh-results-next-adv]").innerText =
+    result.next.adv;
+  resultContainer.querySelector("[data-swsh-results-next-menuadv]").innerText =
+    result.next.menu_advances;
+  resultContainer.querySelector("[data-swsh-results-next-lotto]").innerText =
+    result.next.lotto;
+  resultContainer.querySelector("[data-swsh-results-next-total]").innerText =
+    result.next.total;
 
   resultsArea.appendChild(resultContainer);
 }

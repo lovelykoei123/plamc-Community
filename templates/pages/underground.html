@@ -1,6 +1,6 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}Underground Seed Checker{% endblock %}
+{% block title %}地下大洞窟种子检查{% endblock %}
 
 {% block head %}
 	<script type="module" src="static/js/jquery.min.mjs"></script>
@@ -12,7 +12,7 @@
 <section class="pla-section-results">
         <div data-pla-messages></div>
         <div class="pla-results" data-pla-results>
-            <p class="pla-results-message">Search to begin</p>
+            <p class="pla-results-message">点击左侧按钮开始搜索</p>
         </div>
     </section>
 {% endblock %}
@@ -21,114 +21,114 @@
     <section class="pla-section-options">
 		<div class="pla-control">
             <label for="inputs0">S0</label>
-            <input id="inputs0" placeholder="Input S[0]">
+            <input id="inputs0" placeholder="输入 S">
         </div>
 		
 		<div class="pla-control">
             <label for="inputs1">S1</label>
-            <input id="inputs1" placeholder="Input S[0]">
+            <input id="inputs1" placeholder="输入 S">
         </div>
 		
 		<div class="pla-control">
             <label for="inputs2">S2</label>
-            <input id="inputs2" placeholder="Input S[0]">
+            <input id="inputs2" placeholder="输入 S">
         </div>
 		
 		<div class="pla-control">
             <label for="inputs3">S3</label>
-            <input id="inputs3" placeholder="Input S[0]">
+            <input id="inputs3" placeholder="输入 S">
         </div>
 		
 		<div class="pla-control">
-            <label for="minadvances">Starting Advance:</label>
-            <input type="number" id="minadvances" placeholder="Advances">
+            <label for="minadvances">起始帧数：</label>
+            <input type="number" id="minadvances" placeholder="帧数">
         </div>
 		
 		<div class="pla-control">
-            <label for="advances">Advances to Search:</label>
-            <input type="number" id="advances" placeholder="Advances">
+            <label for="advances">搜索帧数范围：</label>
+            <input type="number" id="advances" placeholder="帧数">
         </div>
 		
 		<div class="pla-control">
-            <label for="delay">Delay:</label>
-            <input type="number" id="delay" placeholder="Advances">
+            <label for="delay">延迟（Delay）：</label>
+            <input type="number" id="delay" placeholder="帧数">
         </div>
 		
 		<div class="pla-control">
-            <label for="version">Game Version:</label>
+            <label for="version">游戏版本：</label>
             <select id="version">
-                <option value="1">Shining Pearl</option>
-				<option value="2">Brilliant Diamond</option>
+                <option value="1">明亮珍珠</option>
+				<option value="2">晶灿钻石</option>
 			</select>
 		</div>
 		
         <div class="pla-control">
-            <label for="storyflags">Story Flags:</label>
+            <label for="storyflags">剧情进度：</label>
             <select id="storyflags">
-                <option value="1">Underground Unlocked</option>
-                <option value="2">Strength Obtained</option>
-                <option value="3">Defog Obtained</option>
-                <option value="4">7 Badges</option>
-                <option value="5">Waterfall Obtained</option>
-				<option value="6">National Dex Obtained</option>
+                <option value="1">已解锁地下大洞窟</option>
+                <option value="2">已获得怪力</option>
+                <option value="3">已获得清除浓雾</option>
+                <option value="4">已获得 7 枚徽章</option>
+                <option value="5">已获得攀瀑</option>
+				<option value="6">已获得全国图鉴</option>
             </select>
         </div>
 		
 		<div class="pla-control">
-			<label for="roomid">Room:</label>
+			<label for="roomid">洞窟类型：</label>
 			<select id="roomid">
-				<option value="2">Spacious Cave</option>
-				<option value="3">Glassland Cave</option>
-				<option value="4">Fountainspring Cave</option>
-				<option value="5">Rocky Cave</option>
-				<option value="6">Volcanic Cave</option>
-				<option value="7">Swampy Cave</option>
-				<option value="8">Dazzling Cave</option>
-				<option value="9">Whiteout Cave</option>
-				<option value="10">Icy Cave</option>
-				<option value="11">Riverbank Cave</option>
-				<option value="12">Sandsear Cave</option>
-				<option value="13">Stillwater Cavern</option>
-				<option value="14">Sunlit Cavern</option>
-				<option value="15">Big Bluff Cavern</option>
-				<option value="16">Stargleam Cavern</option>
-				<option value="17">Glacial Cavern</option>
-				<option value="18">Bogsunk Cavern</option>
-				<option value="19">Typhlo Cavern</option>
+				<option value="2">广阔空洞</option>
+				<option value="3">草原空洞</option>
+				<option value="4">泉源空洞</option>
+				<option value="5">岩壁空洞</option>
+				<option value="6">火山空洞</option>
+				<option value="7">湿地空洞</option>
+				<option value="8">光辉空洞</option>
+				<option value="9">雪白空洞</option>
+				<option value="10">冰封空洞</option>
+				<option value="11">河岸空洞</option>
+				<option value="12">热砂空洞</option>
+				<option value="13">静水洞窟</option>
+				<option value="14">阳光洞窟</option>
+				<option value="15">断崖洞窟</option>
+				<option value="16">星辉洞窟</option>
+				<option value="17">冰河洞窟</option>
+				<option value="18">泥炭洞窟</option>
+				<option value="19">火口洞窟</option>
 			</select>
 		</div>
 		
 		<div class="pla-control-spaced">
-			<label for="diglett">Diglett Activated?</label>
+			<label for="diglett">地鼠加成已激活？</label>
 			<input type="checkbox" id="diglett">
 		</div>
 		
-		<button type="button" class="pla-button expandable-control">Advanced Options</button>
+		<button type="button" class="pla-button expandable-control">高级选项</button>
 			<div class="expandable">
 			
-			<label>Min IVs:</label>
+			<label>最小个体值：</label>
 			<div class="pla-control-spaced">
-				<input type="number" id="minhp" placeholder="HP" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minatk" placeholder="ATK" size="2" min="0" max="31" class="ivbox"> <input type="number" id="mindef" placeholder="DEF" size="2" min="0" max="31" class="ivbox"><input type="number" id="minspa" placeholder="SpA" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minspd" placeholder="SpD" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minspe" placeholder="Spe" size="2" min="0" max="31" class="ivbox">
+				<input type="number" id="minhp" placeholder="HP" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minatk" placeholder="攻击" size="2" min="0" max="31" class="ivbox"> <input type="number" id="mindef" placeholder="防御" size="2" min="0" max="31" class="ivbox"><input type="number" id="minspa" placeholder="特攻" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minspd" placeholder="特防" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minspe" placeholder="速度" size="2" min="0" max="31" class="ivbox">
 			</div>
 
-			<label>Max IVs:</label>
+			<label>最大个体值：</label>
 			<div class="pla-control-spaced">
-				<input type="number" id="maxhp" placeholder="HP" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxatk" placeholder="ATK" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxdef" placeholder="DEF" size="2" min="0" max="31" class="ivbox"><input type="number" id="maxspa" placeholder="SpA" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxspd" placeholder="SpD" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxspe" placeholder="Spe" size="2" min="0" max="31" class="ivbox">
+				<input type="number" id="maxhp" placeholder="HP" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxatk" placeholder="攻击" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxdef" placeholder="防御" size="2" min="0" max="31" class="ivbox"><input type="number" id="maxspa" placeholder="特攻" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxspd" placeholder="特防" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxspe" placeholder="速度" size="2" min="0" max="31" class="ivbox">
 			</div>
 			
 			</div>
 		
 		<div class="pla-control">
-			<label for="selectfilter">Select Filter:</label>
+			<label for="selectfilter">筛选条件：</label>
 			<select id="selectfilter">
-				<option value="no_filter">No Filter</option>
-				<option value="is_shiny">Shiny Only</option>
-				<option value="is_rare">Rare Slot Only</option>
+				<option value="no_filter">不筛选</option>
+				<option value="is_shiny">仅闪光</option>
+				<option value="is_rare">仅稀有槽位</option>
 			</select>
 		</div>
         
         <div class="pla-control-actions">
-            <button class="pla-button pla-button-action" id="pla-button-checkug">Check Underground</button>
+            <button class="pla-button pla-button-action" id="pla-button-checkug">检查地下大洞窟</button>
         </div>
 		<!--<div class="pla-control-actions">
             <button class="pla-button pla-button-action" id="pla-button-checkug-test">Check Underground Test</button>
@@ -137,68 +137,68 @@
 
 	<section>
         <!--<div class="pla-control-spaced">
-            <label for="mmoShinyFilter">Shiny or Alpha</label>
+            <label for="mmoShinyFilter">闪光或头目</label>
             <input type="checkbox" id="mmoShinyOrAlphaFilter">
         </div>-->
 		
 
         <div class="pla-control-spaced">
-            <label for="mmoShinyFilter">Filter Results: Shiny Only</label>
+            <label for="mmoShinyFilter">结果筛选：仅闪光</label>
             <input type="checkbox" id="mmoShinyFilter">
         </div>
 
         <!--<div class="pla-control-spaced">
-            <label for="mmoAlphaFilter">Filter Results: Alpha Only</label>
+            <label for="mmoAlphaFilter">结果筛选：仅头目</label>
             <input type="checkbox" id="mmoAlphaFilter">
         </div>-->
         
         <div class="pla-control">
-            <label for="mmoSpeciesFilter">Species Filter:</label>
+            <label for="mmoSpeciesFilter">物种筛选：</label>
             <input type="text" id="mmoSpeciesFilter">
         </div>
 		
 		<div class="pla-control">
-            <label for="advanceFilter">Advance Filter:</label>
+            <label for="advanceFilter">帧数筛选：</label>
             <input type="text" id="advanceFilter">
         </div>
 		
-		<label for="genderfilter">Filter Results: Gender:</label>
+		<label for="genderfilter">结果筛选：性别</label>
 		<select id="genderfilter">
-			<option value=50>Any</option>
-			<option value=0>Male</option>
-			<option value=1>Female</option>
-			<option value=2>Genderless</option>
+			<option value=50>任意</option>
+			<option value=0>雄性</option>
+			<option value=1>雌性</option>
+			<option value=2>无性别</option>
 		</select>
 		
 		<div class="pla-control">
-			<label for="naturefilter">Filter Results: Nature:</label>
+			<label for="naturefilter">结果筛选：性格</label>
 			<select id="naturefilter" class="chosen-select" multiple>
-				<option value="any">Any</option>
-				<option value="hardy">Hardy</option>
-				<option value="lonely">Lonely</option>
-				<option value="brave">Brave</option>
-				<option value="adamant">Adamant</option>
-				<option value="naughty">Naughty</option>
-				<option value="bold">Bold</option>
-				<option value="docile">Docile</option>
-				<option value="relaxed">Relaxed</option>
-				<option value="impish">Impish</option>
-				<option value="lax">Lax</option>
-				<option value="timid">Timid</option>
-				<option value="hasty">Hasty</option>
-				<option value="serious">Serious</option>
-				<option value="jolly">Jolly</option>
-				<option value="naive">Naive</option>
-				<option value="modest">Modest</option>
-				<option value="mild">Mild</option>
-				<option value="quiet">Quiet</option>
-				<option value="bashful">Bashful</option>
-				<option value="rash">Rash</option>
-				<option value="calm">Calm</option>
-				<option value="gentle">Gentle</option>
-				<option value="sassy">Sassy</option>
-				<option value="careful">Careful</option>
-				<option value="quirky">Quirky</option>
+				<option value="any">任意</option>
+				<option value="hardy">勤奋</option>
+				<option value="lonely">怕寂寞</option>
+				<option value="brave">勇敢</option>
+				<option value="adamant">固执</option>
+				<option value="naughty">顽皮</option>
+				<option value="bold">大胆</option>
+				<option value="docile">坦率</option>
+				<option value="relaxed">悠闲</option>
+				<option value="impish">淘气</option>
+				<option value="lax">乐天</option>
+				<option value="timid">胆小</option>
+				<option value="hasty">急躁</option>
+				<option value="serious">认真</option>
+				<option value="jolly">爽朗</option>
+				<option value="naive">天真</option>
+				<option value="modest">内敛</option>
+				<option value="mild">慢吞吞</option>
+				<option value="quiet">冷静</option>
+				<option value="bashful">害羞</option>
+				<option value="rash">马虎</option>
+				<option value="calm">温和</option>
+				<option value="gentle">温顺</option>
+				<option value="sassy">自大</option>
+				<option value="careful">慎重</option>
+				<option value="quirky">浮躁</option>
 			</select>
 		</div>
     </section>
@@ -214,32 +214,32 @@
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Shiny:</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
+                <li><span class="pla-results-label">闪光：</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
             </ul>
             
 			<ul class="pla-results-ul">
-				<li><span class="pla-results-label">Advances:</span> <span data-pla-results-adv></span></li>
-				<li><span class="pla-results-label">Spawn: </span> <span data-pla-results-spawn></span></li>
+				<li><span class="pla-results-label">帧数：</span> <span data-pla-results-adv></span></li>
+				<li><span class="pla-results-label">生成：</span> <span data-pla-results-spawn></span></li>
 
 			</ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Nature:</span> <span data-pla-results-nature></span></li>
-                <li><span class="pla-results-label">Gender:</span> <span data-pla-results-gender></span></li>
+                <li><span class="pla-results-label">性格：</span> <span data-pla-results-nature></span></li>
+                <li><span class="pla-results-label">性别：</span> <span data-pla-results-gender></span></li>
             </ul>
 			
 			<ul class="pla-results-ul">
-                <li><span class="pla-results-label">Ability:</span> <span data-pla-results-ability></span></li>
-                <li><span class="pla-results-label">Egg Move:</span> <span data-pla-results-egg></span></li>
+                <li><span class="pla-results-label">特性：</span> <span data-pla-results-ability></span></li>
+                <li><span class="pla-results-label">蛋招式：</span> <span data-pla-results-egg></span></li>
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">PID:</span> <span data-pla-results-pid></span></li>
-				<li><span class="pla-results-label">EC:</span> <span data-pla-results-ec></span></li>
+                <li><span class="pla-results-label">PID：</span> <span data-pla-results-pid></span></li>
+				<li><span class="pla-results-label">EC：</span> <span data-pla-results-ec></span></li>
             </ul>
 
             <div class="pla-results-ivs-container">
-                <span class="pla-results-label">IVs:</span>
+                <span class="pla-results-label">个体值：</span>
                 <ul class="pla-results-ivs">
                     <li class="pla-results-ivs-hp" data-pla-results-ivs-hp></li>
                     <li class="pla-results-ivs-att" data-pla-results-ivs-att></li>
@@ -254,7 +254,7 @@
 		 
 	<template id="data-swsh-results-template" data-swsh-results-template>
 		<details>
-		<summary>Advance: <span data-swsh-results-adv></span></summary>
+		<summary>帧数：<span data-swsh-results-adv></span></summary>
 			<div class="pla-results-item" data-swsh-results-template>
 			<template data-inner-results-template>
         <div class="pla-results-item" data-inner-results-template>
@@ -265,32 +265,32 @@
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Shiny:</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
+                <li><span class="pla-results-label">闪光：</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
             </ul>
             
 			<ul class="pla-results-ul">
-				<li><span class="pla-results-label">Advances:</span> <span data-pla-results-adv></span></li>
-				<li><span class="pla-results-label">Spawn: </span> <span data-pla-results-spawn></span></li>
+				<li><span class="pla-results-label">帧数：</span> <span data-pla-results-adv></span></li>
+				<li><span class="pla-results-label">生成：</span> <span data-pla-results-spawn></span></li>
 
 			</ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Nature:</span> <span data-pla-results-nature></span></li>
-                <li><span class="pla-results-label">Gender:</span> <span data-pla-results-gender></span></li>
+                <li><span class="pla-results-label">性格：</span> <span data-pla-results-nature></span></li>
+                <li><span class="pla-results-label">性别：</span> <span data-pla-results-gender></span></li>
             </ul>
 			
 			<ul class="pla-results-ul">
-                <li><span class="pla-results-label">Ability:</span> <span data-pla-results-ability></span></li>
-                <li><span class="pla-results-label">Egg Move:</span> <span data-pla-results-egg></span></li>
+                <li><span class="pla-results-label">特性：</span> <span data-pla-results-ability></span></li>
+                <li><span class="pla-results-label">蛋招式：</span> <span data-pla-results-egg></span></li>
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">PID:</span> <span data-pla-results-pid></span></li>
-				<li><span class="pla-results-label">EC:</span> <span data-pla-results-ec></span></li>
+                <li><span class="pla-results-label">PID：</span> <span data-pla-results-pid></span></li>
+				<li><span class="pla-results-label">EC：</span> <span data-pla-results-ec></span></li>
             </ul>
 
             <div class="pla-results-ivs-container">
-                <span class="pla-results-label">IVs:</span>
+                <span class="pla-results-label">个体值：</span>
                 <ul class="pla-results-ivs">
                     <li class="pla-results-ivs-hp" data-pla-results-ivs-hp></li>
                     <li class="pla-results-ivs-att" data-pla-results-ivs-att></li>

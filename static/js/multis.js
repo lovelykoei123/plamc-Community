@@ -1,6 +1,5 @@
 import {
   doSearch,
-  doSearchTab,
   showNoResultsFound,
   saveBoolToStorage,
   readBoolFromStorage,
@@ -8,51 +7,39 @@ import {
   showPokemonInformation,
   showPokemonHiddenInformation,
   initializeApp,
-  setupExpandables,
 } from "./modules/common.mjs";
+import { zhSpecies } from "./modules/zh-names.mjs";
 
 const resultTemplate = document.querySelector("[data-pla-results-template]");
 const resultsArea = document.querySelector("[data-pla-results]");
-const countArea = document.querySelector("[data-count-results]");
-const countTemplate = document.querySelector("[data-pla-count-template]");
 
 // options
-const minAlive = document.getElementById("minAlive");
-const isVariable = document.getElementById("isvariable");
-const initSpawns = document.getElementById("initspawns");
 const maxDepth = document.getElementById("maxDepth");
 const maxAlive = document.getElementById("maxAlive");
 const groupID = document.getElementById("groupID");
 const nightCheck = document.getElementById("nightToggle");
 
 // filters
+const distSelectFilter = document.getElementById("selectfilter");
 const distShinyOrAlphaCheckbox = document.getElementById(
   "mmoShinyOrAlphaFilter"
 );
 const distShinyCheckbox = document.getElementById("mmoShinyFilter");
 const distAlphaCheckbox = document.getElementById("mmoAlphaFilter");
 const mmoSpeciesText = document.getElementById("mmoSpeciesFilter");
-const ecFilter = document.getElementById("ecFilter");
 
 distShinyOrAlphaCheckbox.addEventListener("change", setFilter);
 distShinyCheckbox.addEventListener("change", setFilter);
 distAlphaCheckbox.addEventListener("change", setFilter);
 mmoSpeciesText.addEventListener("input", setFilter);
-ecFilter.addEventListener("input", setFilter);
 
 // actions
 const checkMultiButton = document.getElementById("pla-button-checkmulti");
 checkMultiButton.addEventListener("click", checkMulti);
-const checkCountSeedButton = document.getElementById("pla-button-checkcount");
-checkCountSeedButton.addEventListener("click", checkCountSeed);
-
 
 initializeApp("multis");
 loadPreferences();
 setupPreferenceSaving();
-setupExpandables();
-setupTabs();
-document.getElementById("defaultOpen").click();
 
 const results = [];
 
@@ -85,31 +72,6 @@ function setupPreferenceSaving() {
   nightCheck.addEventListener("change", (e) =>
     saveBoolToStorage("nightCheck", e.target.checked)
   );
-}
-
-function setupTabs() {
-  document.querySelectorAll(".tablinks").forEach((element) => {
-    element.addEventListener("click", (event) =>
-      openTab(event, element.dataset.plaTabFor)
-    );
-  });
-}
-
-function openTab(evt, tabName) {
-  let i, tabcontent, tablinks;
-
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
 }
 
 function setFilter(event) {
@@ -153,8 +115,7 @@ function filter(
   shinyOrAlphaFilter,
   shinyFilter,
   alphaFilter,
-  speciesFilter,
-  ECFilter
+  speciesFilter
 ) {
   if (shinyOrAlphaFilter && !(result.shiny || result.alpha)) {
     return false;
@@ -168,18 +129,11 @@ function filter(
     return false;
   }
 
-  if (
-    speciesFilter.length != 0 &&
-    !result.species.toLowerCase().includes(speciesFilter.toLowerCase())
-  ) {
-    return false;
-  }
-  
-  if (
-    ECFilter.length != 0 &&
-    !result.ec.toString(16).includes(ECFilter.toLowerCase())
-  ) {
-    return false;
+  if (speciesFilter.length != 0) {
+    // 中英文名称都可以用来筛选
+    const needle = speciesFilter.toLowerCase();
+    const haystack = (result.species + " " + zhSpecies(result.species)).toLowerCase();
+    if (!haystack.includes(needle)) return false;
   }
 
   return true;
@@ -191,9 +145,7 @@ function getOptions() {
     group_id: parseInt(groupID.value),
     maxalive: parseInt(maxAlive.value),
     isnight: nightCheck.checked,
-	minalive: parseInt(minAlive.value),
-	initspawns: parseInt(initSpawns.value),
-	isvariable: isVariable.checked,
+	filter: distSelectFilter.value,
     //	inmap: inmapCheck.checked
   };
 }
@@ -208,41 +160,6 @@ function checkMulti() {
   );
 }
 
-function checkCountSeed() {
-	doSearchTab(
-	"/api/check-count-seed",
-	results,
-	getOptions(),
-	showCountResults,
-	checkCountSeedButton
-	);
-}
-
-function showCountResults() {
-	countArea.innerHTML = "<section><h3> Count Seed Status:</h3></section>";
-	
-	const countContainer = countTemplate.content.cloneNode(true);
-	
-	results.forEach((result) => {
-	
-	countContainer.querySelector("[data-count-results-seed]").textContent = result.seed;
-	//countContainer.querySelector("[data-count-results-spawns]").textContent = result.spawns;
-	countContainer.querySelector("[data-count-results-currspawns]").textContent = result.currspawns;
-	countContainer.querySelector("[data-count-results-first]").textContent = result.first;
-	countContainer.querySelector("[data-count-results-firstseed]").textContent = result.firstseed;
-	countContainer.querySelector("[data-count-results-second]").textContent = result.second;
-	countContainer.querySelector("[data-count-results-secondseed]").textContent = result.secondseed;
-	
-	console.log(result.seed)
-	console.log(result.spawns)
-	console.log(result.first)
-	console.log(result.second)
-	});
-	
-	countArea.appendChild(countContainer);
-}
-	
-
 function showFilteredResults() {
   validateFilters();
 
@@ -250,15 +167,14 @@ function showFilteredResults() {
   let shinyFilter = distShinyCheckbox.checked;
   let alphaFilter = distAlphaCheckbox.checked;
   let speciesFilter = mmoSpeciesText.value;
-  let ECFilter = ecFilter.value;
 
   const filteredResults = results.filter((result) =>
-    filter(result, shinyOrAlphaFilter, shinyFilter, alphaFilter, speciesFilter, ECFilter)
+    filter(result, shinyOrAlphaFilter, shinyFilter, alphaFilter, speciesFilter)
   );
 
   if (filteredResults.length > 0) {
     resultsArea.innerHTML =
-      "<section><h3>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</h3></section>";
+      "<section><h3>D = 消失。可以通过群战（性格强势的宝可梦）或惊吓（性格胆小的宝可梦）让多只宝可梦同时消失。</h3></section>";
     filteredResults.forEach((result) => showResult(result));
   } else {
     showNoResultsFound();
@@ -269,11 +185,11 @@ function showResult(result) {
   const resultContainer = resultTemplate.content.cloneNode(true);
 
   const advances = result.path.length;
-  let pathdisplay = "Path To Target: &nbsp;";
+  let pathdisplay = "通往目标的路径：&nbsp;";
 
   pathdisplay +=
     advances == 0
-      ? "<input type='checkbox'>&nbsp; Initial Spawn"
+      ? "<input type='checkbox'>&nbsp; 初始生成"
       : result.path
           .map((step) => `<input type='checkbox'>&nbsp;D${step}`)
           .join(" &emsp;");
@@ -282,8 +198,6 @@ function showResult(result) {
     pathdisplay;
   resultContainer.querySelector("[data-pla-results-adv]").textContent =
     advances;
-  resultContainer.querySelector("[data-pla-results-nextroundspawns]").textContent =
-    result.nextspawns;
 
   showPokemonInformation(resultContainer, result);
   showPokemonHiddenInformation(resultContainer, result);

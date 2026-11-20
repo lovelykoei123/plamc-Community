@@ -1,21 +1,21 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}Fun Tools{% endblock %}
+{% block title %}趣味工具{% endblock %}
 
 {% block head %}
 {% endblock %}
 
 {% block main %}
 	<div class="tab">
-		<button class="reslinks" id="defaultresOpen" data-pla-tab-for="Results">Results</button>
-		<button class="reslinks" data-pla-tab-for="Seedfinder">SWSH Seed Finder</button>
+		<button class="reslinks" id="defaultresOpen" data-pla-tab-for="Results">结果</button>
+		<button class="reslinks" data-pla-tab-for="Seedfinder">SWSH 种子查找</button>
 	</div>
 	
 	<div id="Results" class="tabcontentres">
 	<section class="swsh-section-results">
 		<div data-pla-messages></div>
 		<div class="swsh-results" data-swsh-results>
-			<p class="swsh-results-message">This tool was created by Cappy, with help from Anubis, Kurt, Lincoln, Zyro and Santacrab420 for code and other assistance.</p>
+			<p class="swsh-results-message">本工具由 Lovely 打包修改，原作者 Cappy，感谢 Anubis、Kurt、Lincoln、Zyro 与 Santacrab420 提供的代码与其他帮助。</p>
 		</div>
 	</section>
 	</div>
@@ -25,72 +25,72 @@
 		<div data-pla-messages></div>
 		<div class="pla-results" data-pla-results>
 			<div class="info">
-        <a>Record 128 Motions (Press Right Stick on Summary)</a><br>
+        <a>记录 128 个动作（在概要界面按右摇杆）</a><br>
 		
-        <a>You will be 128 advances from this state after recording motions</a><p>
+        <a>记录完动作后，你将从这个状态前进 128 帧</a><p>
 		
-		<a>Motions:</a><input style="width: 95%;" type="text" id="motions" maxlength=128 value=""><br>
+		<a>动作序列：</a><input style="width: 95%;" type="text" id="motions" maxlength=128 value=""><br>
 		
-        <button class="swsh-button swsh-button-action" id="addmotion0">(0) Physical</button>
-		<button class="swsh-button swsh-button-action" id="addmotion1">(1) Special</button><br>
+        <button class="swsh-button swsh-button-action" id="addmotion0">(0) 物理</button>
+		<button class="swsh-button swsh-button-action" id="addmotion1">(1) 特殊</button><br>
 		
         <a id="count">000</a><a>/128</a><br>
-        <button class="swsh-button swsh-button-action" id="findseed">Find Seed!</button><br>
+        <button class="swsh-button swsh-button-action" id="findseed">查找种子！</button><br>
         <!--<span class="data-swsh-results">[S0]: </span><span data-s0></span><br>
         <span class="data-swsh-results">[S1]: </span><span data-s1></span>-->
 		<div class="swsh-control">
-			<label for="data-s0">State[0]:</label>
+			<label for="data-s0">状态[0]：</label>
 			<input id="data-s0">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="data-s1">State[1]:</label>
+			<label for="data-s1">状态[1]：</label>
 			<input id="data-s1">
 		</div>
-		<button class="swsh-button swsh-button-action" id="updatewithstate">Update Sidebar With States</button>
+		<button class="swsh-button swsh-button-action" id="updatewithstate">用状态更新侧栏</button>
 		</div>
 		</div>
 	</section>
 	
 		<section class="pla-section-expandable">
-			<button type="button" class="pla-button expandable-control">Seed Updater</button>
+			<button type="button" class="pla-button expandable-control">种子更新器</button>
 		
 			<div class="expandable">
-				<a>Record Motions and input starting advance and max advances to get updated State and Advances:</a>
+				<a>记录动作并输入起始帧数与最大帧数，即可得到更新后的状态与帧数：</a>
 				<div class="swsh-control">
 					<input id="seedupdate">
 				</div>
 				
 				<div class="swsh-control">
-					<label for="startingadvance">Initial Advance:</label>
+					<label for="startingadvance">初始帧数：</label>
 					<input id="startingadvance">
 				</div>
 				
 				<div class="swsh-control">
-					<label for="maxadvance">Max Advance:</label>
+					<label for="maxadvance">最大帧数：</label>
 					<input id="maxadvance">
 				</div>
 			
 			
-				<button class="swsh-button swsh-button-action" id="updateseed">Find Updated State</button>
+				<button class="swsh-button swsh-button-action" id="updateseed">查找更新后的状态</button>
 				
 				<div class="swsh-results-item">
 					<ul class="pla-results-ul">
-						<li><span class="pla-results-label">Number of Results: </span> <span data-seed-count></span></li>
-						<li><span class="pla-results-label">Advances: </span> <span data-seed-adv></span></li>
+						<li><span class="pla-results-label">结果数量：</span> <span data-seed-count></span></li>
+						<li><span class="pla-results-label">帧数：</span> <span data-seed-adv></span></li>
 					</ul>
 					
 					<ul class="pla-results-ul">
-						<li><span class="pla-results-label">State[0]: </span> <span data-updated-s0></span></li>
-						<li><span class="pla-results-label">State[0]: </span> <span data-updated-s1></span></li>
+						<li><span class="pla-results-label">状态[0]：</span> <span data-updated-s0></span></li>
+						<li><span class="pla-results-label">状态[1]：</span> <span data-updated-s1></span></li>
 					</ul>
 				</div>
 				
-				<button class="swsh-button swsh-button-action" id="updatesidebarstate">Update Sidebar With States</button>
+				<button class="swsh-button swsh-button-action" id="updatesidebarstate">用状态更新侧栏</button>
 			</div>
 		</section>
 		
-		Credit for algorithm! <br>
+		算法来源：<br>
 		<a href="https://github.com/niart120/Project_Xe">Project Xe</a>
 	</section>
 	</div>
@@ -101,49 +101,54 @@
 	<section class="swsh-section-options">
 	
 		<div class="tab">
-			<button class="tablinks" id="defaultOpen" data-swsh-tab-for="Cram">Cram-o-Matic</button>
-			<button class="tablinks" data-swsh-tab-for="Lotto">Lottery</button>
+			<button class="tablinks" id="defaultOpen" data-swsh-tab-for="Cram">机器鹕</button>
+			<button class="tablinks" data-swsh-tab-for="Lotto">抽奖</button>
 		</div>
 		
 		<div class="swsh-control">
-			<label for="inputseed0">State[0]:</label>
-			<input id="inputseed0" placeholder="Input State[0]">
+			<label for="inputseed0">状态[0]：</label>
+			<input id="inputseed0" placeholder="输入状态[0]">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="inputseed1">State[1]:</label>
-			<input id="inputseed1" placeholder="Input State[1]">
+			<label for="inputseed1">状态[1]：</label>
+			<input id="inputseed1" placeholder="输入状态[1]">
 		</div>
 
 		<div class="swsh-control">
-			<label for="npccount">NPC Count:</label>
-			<input type="number" id="npccount" placeholder="Input Number of NPCs">
+			<label for="npccount">NPC 数量：</label>
+			<input type="number" id="npccount" placeholder="输入 NPC 数量">
 		</div>
 
 		<div id="Cram" class="tabcontent">
 			<div class="swsh-control-spaced">
-				<label for="sportorsafari">Sport or Safari Ball?</label>
+				<label for="sportorsafari">竞赛球或狩猎球？</label>
 				<input type="checkbox" id="sportorsafari">
+			</div>
+			
+			<div class="swsh-control-spaced">
+				<label for="apricorn">球果球？</label>
+				<input type="checkbox" id="apricorn">
 			</div>
 
 			<div class="swsh-control-spaced">
-				<label for="bonuscount">Bonus Items?</label>
+				<label for="bonuscount">额外奖励道具？</label>
 				<input type="checkbox" id="bonuscount">
 			</div>
 
 
 			<div class="swsh-control-actions">
-				<button class="swsh-button swsh-button-action" id="swsh-button-checkcram">Find Menu Advance for Cram-o-Matic</button>
+				<button class="swsh-button swsh-button-action" id="swsh-button-checkcram">计算机器鹕的菜单帧数</button>
 			</div>
 		</div>
 		
 		<div id="Lotto" class="tabcontent">
 			<div class="swsh-control">
-				<label for="tid">TIDs to Search For: (Separate with comma)</label>
-				<input id="tid" placeholder="Input TID to Search For (comma separated)">
+				<label for="tid">要查找的 TID（逗号分隔）</label>
+				<input id="tid" placeholder="输入要查找的 TID（逗号分隔）">
 			</div>
 			<div class="swsh-control-actions">
-				<button class="swsh-button swsh-button-action" id="swsh-button-checklotto">Find Menu Advance for Lottery</button>
+				<button class="swsh-button swsh-button-action" id="swsh-button-checklotto">计算抽奖的菜单帧数</button>
 			</div>
 		</div>
 	</section>
@@ -155,35 +160,82 @@
 	<template data-swsh-results-cram-template>
 		<div class="swsh-results-item" data-swsh-results-cram-template>
 			<ul class="swsh-results-heading swsh-results-ul">
-				<li class="swsh-results-ball" data-swsh-results-ball>Results:</li>
+				<li class="swsh-results-ball" data-swsh-results-ball>结果：</li>
 			</ul>
 			
 			<ul class="swsh-results-ul">
-				<li><span class="swsh-results-label">Sport or Safari:</span> <span data-swsh-results-issportsafari></span></li>
+				<li><span class="swsh-results-label">球种：</span> <span data-swsh-results-balltype></span></li>
 			</ul>
 			<ul class="swsh-results-ul">
-				<li><span class="swsh-results-label">Bonus Count:</span> <span data-swsh-results-isbonuscount></span></li>
+				<li><span class="swsh-results-label">奖励次数：</span> <span data-swsh-results-isbonuscount></span></li>
 			</ul>
 			<ul class="swsh-results-ul">
-				<li><span class="swsh-results-label">Advances:</span> <span data-swsh-results-adv></span></li>
-				<li><span class="swsh-results-label">Advances after Closing Menu:</span> <span data-swsh-results-menuadv></span></li>
+				<li><span class="swsh-results-label">帧数：</span> <span data-swsh-results-adv></span></li>
+				<li><span class="swsh-results-label">关闭菜单后的帧数：</span> <span data-swsh-results-menuadv></span></li>
 			</ul>
+			<ul class="swsh-results-ul">
+				<li><span class="swsh-results-label">最终总帧数：</span> <span data-swsh-results-total></span></li>
+			</ul>
+			
+			<details>
+			<summary>高级信息</summary>
+		
+				<summary>前一状态结果：</summary>
+					<ul class="swsh-results-ul">
+						<li><span class="swsh-results-label">球种：</span> <span data-swsh-results-prev-balltype></span></li>
+					</ul>
+					<ul class="swsh-results-ul">
+						<li><span class="swsh-results-label">奖励次数：</span> <span data-swsh-results-prev-isbonuscount></span></li>
+					</ul>
+				<summary>后一状态结果：</summary>
+					<ul class="swsh-results-ul">
+						<li><span class="swsh-results-label">球种：</span> <span data-swsh-results-next-balltype></span></li>
+					</ul>
+					<ul class="swsh-results-ul">
+						<li><span class="swsh-results-label">奖励次数：</span> <span data-swsh-results-next-isbonuscount></span></li>
+					</ul>
+			</details>
 		</div>
 	</template>
 	
 	<template data-swsh-results-lotto-template>
 		<div class="swsh-results-item" data-swsh-results-lotto-template>
 			<ul class="swsh-results-heading swsh-results-ul">
-				<li class="swsh-results-ball" data-swsh-results-ball>Results:</li>
+				<li class="swsh-results-ball" data-swsh-results-ball>结果：</li>
 			</ul>
 			
 			<ul class="swsh-results-ul">
-				<li><span class="swsh-results-label">Advances:</span> <span data-swsh-results-adv></span></li>
-				<li><span class="swsh-results-label">Advances after Closing Menu:</span> <span data-swsh-results-menuadv></span></li>
+				<li><span class="swsh-results-label">帧数：</span> <span data-swsh-results-adv></span></li>
+				<li><span class="swsh-results-label">关闭菜单后的帧数：</span> <span data-swsh-results-menuadv></span></li>
 			</ul>
 			<ul class="swsh-results-ul">
-				<li><span class="swsh-results-label">Lotto ID:</span> <span data-swsh-results-lotto></span></li>
+				<li><span class="swsh-results-label">总帧数：</span> <span data-swsh-results-total></span></li>
+				<li><span class="swsh-results-label">抽奖 ID：</span> <span data-swsh-results-lotto></span></li>
 			</ul>
+			
+			<details>
+			<summary>高级信息</summary>
+			
+				<summary>前一状态结果：</summary>
+				<ul class="swsh-results-ul">
+					<li><span class="swsh-results-label">帧数：</span> <span data-swsh-results-prev-adv></span></li>
+					<li><span class="swsh-results-label">关闭菜单后的帧数：</span> <span data-swsh-results-prev-menuadv></span></li>
+				</ul>
+				<ul class="swsh-results-ul">
+					<li><span class="swsh-results-label">总帧数：</span> <span data-swsh-results-prev-total></span></li>
+					<li><span class="swsh-results-label">抽奖 ID：</span> <span data-swsh-results-prev-lotto></span></li>
+				</ul>
+				
+				<summary>后一状态结果：</summary>
+				<ul class="swsh-results-ul">
+					<li><span class="swsh-results-label">帧数：</span> <span data-swsh-results-next-adv></span></li>
+					<li><span class="swsh-results-label">关闭菜单后的帧数：</span> <span data-swsh-results-next-menuadv></span></li>
+				</ul>
+				<ul class="swsh-results-ul">
+					<li><span class="swsh-results-label">总帧数：</span> <span data-swsh-results-next-total></span></li>
+					<li><span class="swsh-results-label">抽奖 ID：</span> <span data-swsh-results-next-lotto></span></li>
+				</ul>
+			</details>
 		</div>
 	</template>
 

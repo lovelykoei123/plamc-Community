@@ -1,6 +1,6 @@
-from pla.rng import Xorshift,XOROSHIRO_BDSP
+from ...pla.rng import Xorshift,XOROSHIRO_BDSP
 from .daycare import Daycare
-from pla.data import natures
+from ...pla.data import natures
 
 def generate_stationary(rng:Xorshift, fixed_gender=False, guaranteed_ivs=0):
 
@@ -38,7 +38,6 @@ def generate_stationary(rng:Xorshift, fixed_gender=False, guaranteed_ivs=0):
     ability = rng.alt_rand(2)
 
     gender = -1 if fixed_gender else rng.alt_rand(253)+1
-    print(f"Gender: {gender}")
     nature = rng.alt_rand(25)
 
     return ec,pid,shiny,square,ivs,ability,gender,nature

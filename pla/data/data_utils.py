@@ -1,6 +1,6 @@
 import json
-from pla.filters import *
-from bdsp.filters import *
+from ..filters import *
+from ...bdsp.filters import *
 
 filter_commands = {
     "is_shiny": is_shiny,
@@ -55,6 +55,48 @@ def all_mmo_pokemon():
     return set([m['name'] for b in mmo.values() for m in b])
 
 # functions for manipulating data returned by search functions
+
+# 结果里的路径描述原来是英文（First Round Path / Bonus Path / Initial Spawn ...），
+# 这里在输出前统一换成中文。顺序有讲究：
+#   「First Round Path:」「Bonus Path:」必须排在「Path:」前面，
+#   「Bonus Initial Spawn 」必须排在「Initial Spawn 」前面，
+#   带冒号的长串必须排在「Bonus 」前面。
+# 这些字符串在计算过程中被当作 key 解析，所以只能在 calc 完成后的出口处替换。
+PATH_TEXT_REPLACEMENTS = (
+    ("First Round Path: ", "第一轮路径："),
+    ("Bonus Path: ", "奖励路径："),
+    ("Bonus Initial Spawn ", "奖励初始生成 "),
+    ("Initial Spawn ", "初始生成 "),
+    ("Path: ", "路径："),
+    ("First Round ", "第一轮 "),
+    ("Bonus ", "奖励 "),
+    ("[Clear Round]", "[清空轮]"),
+    ("Revisit ", "重访 "),
+)
+
+
+def localize_path_text(text):
+    """把路径描述里的英文片段换成中文，非字符串原样返回。"""
+    if not isinstance(text, str):
+        return text
+    for src, dst in PATH_TEXT_REPLACEMENTS:
+        text = text.replace(src, dst)
+    return text
+
+
+def localize_mmo_result(result):
+    """浅拷贝结果并把 index / chains / dupes 里的路径文本汉化。"""
+    if not isinstance(result, dict):
+        return result
+    res = dict(result)
+    if isinstance(res.get('index'), str):
+        res['index'] = localize_path_text(res['index'])
+    for field in ('chains', 'dupes'):
+        if isinstance(res.get(field), list):
+            res[field] = [localize_path_text(v) for v in res[field]]
+    return res
+
+
 def flatten_all_mmo_results(results, filter_results=True, filter_function=is_shiny):
     res = []
 
@@ -80,15 +122,15 @@ def flatten_normal_outbreaks(results, filter_results=True, filter_function=is_sh
 
 def flatten_firstround(round, filter_results, filter_function):
     if filter_results:
-        return [p for p in round.values() if filter_function(p)]
+        return [localize_mmo_result(p) for p in round.values() if filter_function(p)]
     else:
-        return [p for p in round.values()]
+        return [localize_mmo_result(p) for p in round.values()]
 
 def flatten_bonusround(round, filter_results, filter_function):
     if filter_results:
-        return [p for b in round.values() for p in b.values() if filter_function(p)]
+        return [localize_mmo_result(p) for b in round.values() for p in b.values() if filter_function(p)]
     else:
-        return [p for b in round.values() for p in b.values()]
+        return [localize_mmo_result(p) for b in round.values() for p in b.values()]
 
 def flatten_multi(results, filter_results=True, filter_function=is_shiny):
     if filter_results:

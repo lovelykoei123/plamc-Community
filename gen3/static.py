@@ -2,9 +2,9 @@ import numpy as np
 from numba_pokemon_prngs.lcrng import PokeRNGDiv
 
 #imports from main.py
-from gen3.core import *
-from gen3.filters import compare_all_ivs
-from gen3.data import natures, pktype
+from .core import *
+from .filters import compare_all_ivs
+from .data import natures, pktype
 
 
 '''

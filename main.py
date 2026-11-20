@@ -3,18 +3,13 @@ import json
 import mimetypes
 
 from flask import Flask, render_template, request
-from bdsp.filters.filters import *
-from nxreader import NXReader
-import pla
-from pla.core import get_sprite, teleport_to_spawn
-from pla.data import hisuidex
-from pla.saves import read_research, rolls_from_research
-from pla.data.data_utils import flatten_all_mmo_results, flatten_map_mmo_results, flatten_normal_outbreaks, flatten_multi, filter_commands, flatten_overworld
-from bdsp.data.data_utils import flatten_bdsp_stationary, flatten_ug, flatten_ug_test
-from pla.rng import Filter
-import bdsp
-import swsh
-import gen3
+from .nxreader import NXReader
+from . import pla
+from .pla.core import get_sprite, teleport_to_spawn
+from .pla.data import hisuidex
+from .pla.saves import read_research, rolls_from_research
+from .pla.data.data_utils import flatten_all_mmo_results, flatten_map_mmo_results, flatten_normal_outbreaks, flatten_multi, filter_commands, is_shiny
+from .app import ROOT_PATH
 
 mimetypes.add_type('application/javascript', '.js')
 mimetypes.add_type('application/javascript', '.mjs')
@@ -24,7 +19,7 @@ app = Flask(__name__)
 # Set max size for uploads
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1000 * 1000
 
-config = json.load(open("config.json"))
+config = json.load(open(ROOT_PATH + "config.json"))
 
 if config["SeedCheckOnly"]:
     print("Seed Check only mode! Note: You will not be able to use MMO checker or Distiortion Checker!")
@@ -39,7 +34,7 @@ else:
 
 @app.route("/")
 def home():
-    return render_template('index.html', home='true')
+    return render_template('index.html')
 
 @app.route("/mmos")
 def mmo_checker():
@@ -69,56 +64,16 @@ def multiseed():
 def settings():
     return render_template('pages/settings.html', title='Settings')
 
-@app.route("/cram")
-def cram():
-    return render_template('pages/cram.html', title='Fun Tools', swsh="true")
-
-@app.route("/underground")
-def ug():
-    return render_template('pages/underground.html', title='Underground Checker', bdsp="true")
-
-@app.route("/bdspstationary")
-def bdsp_stationary():
-    return render_template('pages/b_stationary.html', title='Stationary Checker', bdsp="true")
-
-@app.route("/bdspwild")
-def bwild():
-    return render_template('pages/b_wild.html', title='Wild Checker', bdsp="true")
-
-@app.route("/bdsproamer")
-def broamer():
-    return render_template('pages/b_roamer.html', title='Roamer Checker', bdsp="true")
-
-@app.route("/bdspegg")
-def begg():
-    return render_template('pages/b_egg.html', title='Egg Checker', bdsp="true")
-
-@app.route("/bdsptid")
-def btid():
-    return render_template('pages/b_tid.html', title='TID Checker', bdsp="true")
-
-@app.route("/overworld")
-def owrng():
-    return render_template('pages/overworld.html', title='Overworld Checker', swsh="true")
-
-@app.route("/g3static")
-def g3static():
-    return render_template('pages/rse_static.html', title='RSE Static Checker', g3="true") 
-
-@app.route("/g3wild")
-def g3wild():
-    return render_template('pages/rse_wild.html', title='RSE Static Checker', g3="true")
-
 
 # API ROUTES
 @app.route('/api/read-mmos', methods=['POST'])
 def read_mmos():
-    results = pla.get_all_mmos(reader, request.json['research'])
+    results = pla.get_all_map_mmos(reader, request.json['research'], False)
     return { "results": flatten_all_mmo_results(results, config.get('FILTER_ON_SERVER', False)) }
 
 @app.route('/api/read-mmos-one-map', methods=['POST'])
 def read_one_map():
-    results = pla.get_map_mmos(reader, request.json['mapname'], request.json['research'], request.json['inmap'])
+    results = pla.get_map_mmos(reader,request.json['mapname'],request.json['research'], False)
     return { "results": flatten_map_mmo_results(results, config.get('FILTER_ON_SERVER', False)) }
 
 @app.route('/api/read-outbreaks', methods=['POST'])
@@ -168,7 +123,9 @@ def get_from_seed():
                                   request.json['frspawns'],
                                   request.json['brspawns'])
     print(request.json['research'])
-    return { "results": flatten_map_mmo_results(results, config.get('FILTER_ON_SERVER', False)) }
+    # add "Select Filter:" in MMOS page
+    filter_command = filter_commands.get(request.json['filter'], is_shiny)
+    return { "results": flatten_map_mmo_results(results, config.get('FILTER_ON_SERVER', False), filter_command) }
 
 @app.route('/api/check-alphaseed', methods=['POST'])
 def get_alpha_from_seed():
@@ -186,20 +143,12 @@ def get_alpha_from_seed():
 
 @app.route('/api/check-multi-spawn', methods=['POST'])
 def check_multispawner():
-    if not request.json['isvariable']:
-        minspawns = request.json['maxalive']
-    else:
-        minspawns = request.json['minalive']
-    
     results = pla.check_multi_spawner(reader,
                                       request.json['research'],
                                       request.json['group_id'],
                                       request.json['maxalive'],
                                       request.json['maxdepth'],
-                                      request.json['isnight'],
-                                      minspawns,
-                                      request.json['initspawns'],
-                                      request.json['isvariable'])
+                                      request.json['isnight'])
     return { "results": flatten_multi(results, config.get('FILTER_ON_SERVER', False)) }
 
 @app.route('/api/check-multi-seed', methods=['POST'])
@@ -229,20 +178,6 @@ def pokemon():
             ]
         }
 
-@app.route('/api/check-count-seed', methods=['POST'])
-def check_countseed():
-
-    results = []
-
-    result = pla.check_count_seed_info(reader,
-                                        request.json['group_id'],
-                                        request.json['maxalive'],
-                                        request.json['minalive'])
-    
-    results.append(result)
-
-    return {"results": results}
-
 @app.route('/api/read-research', methods=['POST'])
 def read_savefile():
     if request.method == 'POST':
@@ -271,267 +206,11 @@ def read_savefile():
     
     return { 'error': 'There was a problem reading your save' }
 
-@app.route('/api/check-cramomatic', methods=['POST'])
-def check_cram_o_matic():
-
-    results = []
-
-    result = swsh.predict_cram(request.json['s0'],
-                                request.json['s1'],
-                                request.json['npc_count'],
-                                request.json['filter'])
-
-    results.append(result)
-
-    return { "results": results }
-
-@app.route('/api/check-lotto', methods=['POST'])
-def check_lottery():
-
-    results = []
-
-    result = swsh.check_lotto(request.json['s0'],
-                                request.json['s1'],
-                                request.json['npc_count'],
-                                request.json['ids'])
-
-    results.append(result)
-
-    return { "results": results }
-
-@app.route('/api/find-swsh-seed', methods=['POST'])
-def find_swsh_seed():
-
-    results = swsh.find_swsh_seed(request.json['motions'])
-
-    return { "results": results }
-
-@app.route('/api/update-swsh-seed', methods=['POST'])
-def update_swsh_seed():
-
-    results = swsh.update_swsh_seed(request.json['s0'],
-                                        request.json['s1'],
-                                        request.json['motions'],
-                                        request.json['min'],
-                                        request.json['max'])
-
-    return { "results": results }
-
-
-'''
-@app.route('/api/check-underground', methods=['POST'])
-def check_ug_seed():
-
-    filter_command = filter_commands.get(request.json['filter'], is_shiny)
-
-    results = bdsp.check_ug_advance(request.json['s0'],
-                                    request.json['s1'],
-                                    request.json['s2'],
-                                    request.json['s3'],
-                                    request.json['story'],
-                                    request.json['room'],
-                                    request.json['version'],
-                                    request.json['advances'],
-                                    request.json['minadv'],
-                                    request.json['diglett'],
-                                    request.json['ivs'],
-                                    request.json['delay'])
-
-    return { "results": flatten_ug(results, config.get('FILTER_ON_SERVER', False), filter_command) }
-
-@app.route('/api/check-underground-test', methods=['POST'])
-def check_ug_seed_test():
-
-    filter_command = filter_commands.get(request.json['filter'], is_shiny)
-
-    results = bdsp.check_ug_advance(request.json['s0'],
-                                    request.json['s1'],
-                                    request.json['s2'],
-                                    request.json['s3'],
-                                    request.json['story'],
-                                    request.json['room'],
-                                    request.json['version'],
-                                    request.json['advances'],
-                                    request.json['minadv'],
-                                    request.json['diglett'],
-                                    request.json['ivs'],
-                                    request.json['delay'])
-
-    return { "results": flatten_ug_test(results, config.get('FILTER_ON_SERVER', False), filter_command) }
-'''
-@app.route('/api/check-gen3-static', methods=['POST'])
-def check_gen3_static():
-
-    filter_command = filter_commands.get(request.json['command'], is_shiny)
-
-    results = gen3.check_statics(request.json['tid'],
-                                 request.json['sid'],
-                                 request.json['filter'],
-                                 request.json['delay'],
-                                 request.json['method'],
-                                 request.json['seed'])
-    
-    return { "results": flatten_bdsp_stationary(results, config.get('FILTER_ON_SERVER', False), filter_command) }
-
-@app.route('/api/g3-check-wilds', methods=['POST'])
-def check_g3_wilds():
-
-    filter_command = filter_commands.get(request.json['command'], is_shiny)
-
-    results = gen3.check_wilds(request.json['tid'],
-                               request.json['sid'],
-                               request.json['filter'],
-                               request.json['delay'],
-                               request.json['method'],
-                               request.json['lead'],
-                               request.json['info'],
-                               request.json['safari'],
-                               request.json['rock'],
-                               request.json['syncnature'],
-                               request.json['seed'])
-    
-    return { "results": flatten_bdsp_stationary(results, config.get('FILTER_ON_SERVER', False), filter_command) }
-
-@app.route('/api/g3-pop-location', methods=['POST'])
-def g3_pop_location():
-
-    results = gen3.populate_routes(request.json['version'], request.json['type'])
-
-    return { "results": results}
-
-@app.route('/api/g3-pop-species', methods=['POST'])
-def g3_pop_species():
-
-    results = gen3.populate_species(request.json['version'],request.json['type'],request.json['location'])
-
-    return { "results": results}
-
-@app.route('/api/g3-autofill', methods=['POST'])
-def g3_autofill():
-
-    results = gen3.autofill(request.json['version'],request.json['type'],request.json['location'],request.json['species'])
-
-    return { "results": results}
-
-@app.route('/api/check-bdsp-stationary', methods=['POST'])
-def check_bdsp_stationary():
-
-    filter_command = filter_commands.get(request.json['command'], is_shiny)
-
-    states = [request.json['s0'], request.json['s1'], request.json['s2'], request.json['s3']]
-
-    results = bdsp.read_stationary_seed(states,
-                                        request.json['filter'],
-                                        request.json['fixed_ivs'],
-                                        request.json['set_gender'],
-                                        request.json['species'],
-                                        request.json['delay'])
-    
-    return { "results": flatten_bdsp_stationary(results, config.get('FILTER_ON_SERVER', False), filter_command) }
-
-@app.route('/api/check-bdsp-wild', methods=['POST'])
-def check_bdsp_wild():
-
-    filter_command = filter_commands.get(request.json['command'], is_shiny)
-
-    states = [request.json['s0'], request.json['s1'], request.json['s2'], request.json['s3']]
-
-    results = bdsp.read_wild_seed(states,
-                                request.json['filter'],
-                                request.json['set_gender'],
-                                request.json['delay'])
-    
-    return { "results": flatten_bdsp_stationary(results, config.get('FILTER_ON_SERVER', False), filter_command) }
-
-@app.route('/api/check-bdsp-roamer', methods=['POST'])
-def check_bdsp_roamer():
-
-    filter_command = filter_commands.get(request.json['command'], is_shiny)
-
-    states = [request.json['s0'], request.json['s1'], request.json['s2'], request.json['s3']]
-
-    results = bdsp.read_roamer_seed(states,
-                                    request.json['filter'],
-                                    request.json['fixed_ivs'],
-                                    request.json['set_gender'],
-                                    request.json['delay'])
-    
-    return { "results": flatten_bdsp_stationary(results, config.get('FILTER_ON_SERVER', False), filter_command) }
-
-@app.route('/api/check-bdsp-egg', methods=['POST'])
-def check_bdsp_egg():
-
-    filter_command = filter_commands.get(request.json['command'], is_shiny)
-
-    states = [request.json['s0'], request.json['s1'], request.json['s2'], request.json['s3']]
-
-    results = bdsp.read_egg_seed(states,
-                            request.json['filter'],
-                            request.json['daycare'],
-                            request.json['delay'])
-    
-    return { "results": flatten_bdsp_stationary(results, config.get('FILTER_ON_SERVER', False), filter_command) }
-
-@app.route('/api/check-bdsp-tid', methods=['POST'])
-def check_bdsp_tid():
-
-    states = [request.json['s0'], request.json['s1'], request.json['s2'], request.json['s3']]
-
-    results = bdsp.read_tid_seed(states,
-                                request.json['filter'],
-                                request.json['ids'])
-    
-    return { "results": flatten_bdsp_stationary(results, False) }
-
-@app.route('/api/pop-location', methods=['POST'])
-def pop_location():
-
-    results = swsh.populate_location(request.json['type'], request.json['version'])
-
-    return { "results": results}
-
-@app.route('/api/pop-weather', methods=['POST'])
-def pop_weather():
-
-    results = swsh.populate_weather(request.json['loc'], request.json['type'], request.json['version'])
-
-    return { "results": results}
-
-@app.route('/api/pop-species', methods=['POST'])
-def pop_species():
-
-    results = swsh.populate_species(request.json['weather'], request.json['loc'], request.json['type'], request.json['version'])
-
-    return { "results": results}
-
-@app.route('/api/pop-options', methods=['POST'])
-def pop_options():
-
-    results = swsh.autofill(request.json['weather'], request.json['loc'], request.json['type'], request.json['version'], request.json['species'])
-
-    return { "results": results}
-
-@app.route('/api/check-overworld', methods=['POST'])
-def check_ow():
-
-    states = [request.json['s0'], request.json['s1']]
-
-    #filters = Filter(None, None, None, "Star/Square", request.json['filter']['slot_min'], request.json['filter']['slot_max'], None, None, None, None, None, None, None, None)
-
-    filters = Filter(request.json['filter']['minivs'], request.json['filter']['maxivs'], None, request.json['filter']['shiny_filter'] if request.json['filter']['shiny_filter'] != "None" else None,
-                    request.json['filter']['slot_min'], request.json['filter']['slot_max'], None, None, request.json['filter']['brilliant'], None,
-                    None, None, None, None)
-
-    results = swsh.check_overworld_seed(states, filters, request.json['options'], request.json['initadv'], request.json['maxadv'], request.json['info'])
-
-    #return { "results":  [results] }
-    return { "results": flatten_overworld(results, False)}
-
 # Legacy routes used by bots
-import app.legacy as legacy
+from .app import legacy as legacy
 app.add_url_rule('/check-mmoseed', view_func=legacy.legacy_get_from_seed)
 app.add_url_rule('/check-alphaseed', view_func=legacy.legacy_get_alpha_from_seed)
 app.add_url_rule('/check-multi-seed', view_func=legacy.legacy_check_multiseed)
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=8100, debug=True)
+    app.run(host="localhost", port=8200, debug=True)

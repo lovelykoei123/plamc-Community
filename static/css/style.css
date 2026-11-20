@@ -2004,3 +2004,21 @@ section.swsh-section-expandable {
     transform: rotate(360deg);
   }
 }
+
+/* 种子输入 + 「导入」按钮：按钮在输入框左边，读 pokeldn 插件的最新种子 */
+.pla-seed-row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing1);
+}
+
+.pla-seed-row > input[type="number"] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pla-seed-import {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 0.92rem;
+}

@@ -1,21 +1,21 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}Overworld Seed Checker{% endblock %}
+{% block title %}大地图种子检查{% endblock %}
 
 {% block head %}
 {% endblock %}
 
 {% block main %}
 	<div class="tab">
-		<button class="reslinks" id="defaultresOpen" data-pla-tab-for="Results">Results</button>
-		<button class="reslinks" data-pla-tab-for="Seedfinder">SWSH Seed Finder</button>
+		<button class="reslinks" id="defaultresOpen" data-pla-tab-for="Results">结果</button>
+		<button class="reslinks" data-pla-tab-for="Seedfinder">SWSH 种子查找</button>
 	</div>
 	
 	<div id="Results" class="tabcontentres">
 	<section class="swsh-section-results">
 		<div data-pla-messages></div>
 		<div class="swsh-results" data-swsh-results>
-			<p class="swsh-results-message">This tool was created by Cappy, with help from Anubis, Kurt, Lincoln, Zyro and Santacrab420 for code and other assistance.</p>
+			<p class="swsh-results-message">本工具由 Lovely 打包修改，原作者 Cappy，感谢 Anubis、Kurt、Lincoln、Zyro 与 Santacrab420 提供的代码与其他帮助。</p>
 		</div>
 	</section>
 	</div>
@@ -25,72 +25,72 @@
 		<div data-pla-messages></div>
 		<div class="pla-results" data-pla-results>
 			<div class="info">
-        <a>Record 128 Motions (Press Right Stick on Summary)</a><br>
+        <a>记录 128 个动作（在概要界面按右摇杆）</a><br>
 		
-        <a>You will be 128 advances from this state after recording motions</a><p>
+        <a>记录完动作后，你将从这个状态前进 128 帧</a><p>
 		
-		<a>Motions:</a><input style="width: 95%;" type="text" id="motions" maxlength=128 value=""><br>
+		<a>动作序列：</a><input style="width: 95%;" type="text" id="motions" maxlength=128 value=""><br>
 		
-        <button class="swsh-button swsh-button-action" id="addmotion0">(0) Physical</button>
-		<button class="swsh-button swsh-button-action" id="addmotion1">(1) Special</button><br>
+        <button class="swsh-button swsh-button-action" id="addmotion0">(0) 物理</button>
+		<button class="swsh-button swsh-button-action" id="addmotion1">(1) 特殊</button><br>
 		
         <a id="count">000</a><a>/128</a><br>
-        <button class="swsh-button swsh-button-action" id="findseed">Find Seed!</button><br>
+        <button class="swsh-button swsh-button-action" id="findseed">查找种子！</button><br>
         <!--<span class="data-swsh-results">[S0]: </span><span data-s0></span><br>
         <span class="data-swsh-results">[S1]: </span><span data-s1></span>-->
 		<div class="swsh-control">
-			<label for="data-s0">State[0]:</label>
+			<label for="data-s0">状态[0]：</label>
 			<input id="data-s0">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="data-s1">State[1]:</label>
+			<label for="data-s1">状态[1]：</label>
 			<input id="data-s1">
 		</div>
-		<button class="swsh-button swsh-button-action" id="updatewithstate">Update Sidebar With States</button>
+		<button class="swsh-button swsh-button-action" id="updatewithstate">用状态更新侧栏</button>
 		</div>
 		</div>
 	</section>
 	
 		<section class="pla-section-expandable">
-			<button type="button" class="pla-button expandable-control">Seed Updater</button>
+			<button type="button" class="pla-button expandable-control">种子更新器</button>
 		
 			<div class="expandable">
-				<a>Record Motions and input starting advance and max advances to get updated State and Advances:</a>
+				<a>记录动作并输入起始帧数与最大帧数，即可得到更新后的状态与帧数：</a>
 				<div class="swsh-control">
 					<input id="seedupdate">
 				</div>
 				
 				<div class="swsh-control">
-					<label for="startingadvance">Initial Advance:</label>
+					<label for="startingadvance">初始帧数：</label>
 					<input id="startingadvance">
 				</div>
 				
 				<div class="swsh-control">
-					<label for="maxadvance">Max Advance:</label>
+					<label for="maxadvance">最大帧数：</label>
 					<input id="maxadvance">
 				</div>
 			
 			
-				<button class="swsh-button swsh-button-action" id="updateseed">Find Updated State</button>
+				<button class="swsh-button swsh-button-action" id="updateseed">查找更新后的状态</button>
 				
 				<div class="swsh-results-item">
 					<ul class="pla-results-ul">
-						<li><span class="pla-results-label">Number of Results: </span> <span data-seed-count></span></li>
-						<li><span class="pla-results-label">Advances: </span> <span data-seed-adv></span></li>
+						<li><span class="pla-results-label">结果数量：</span> <span data-seed-count></span></li>
+						<li><span class="pla-results-label">帧数：</span> <span data-seed-adv></span></li>
 					</ul>
 					
 					<ul class="pla-results-ul">
-						<li><span class="pla-results-label">State[0]: </span> <span data-updated-s0></span></li>
-						<li><span class="pla-results-label">State[0]: </span> <span data-updated-s1></span></li>
+						<li><span class="pla-results-label">状态[0]：</span> <span data-updated-s0></span></li>
+						<li><span class="pla-results-label">状态[1]：</span> <span data-updated-s1></span></li>
 					</ul>
 				</div>
 				
-				<button class="swsh-button swsh-button-action" id="updatesidebarstate">Update Sidebar With States</button>
+				<button class="swsh-button swsh-button-action" id="updatesidebarstate">用状态更新侧栏</button>
 			</div>
 		</section>
 		
-		Credit for algorithm! <br>
+		算法来源：<br>
 		<a href="https://github.com/niart120/Project_Xe">Project Xe</a>
 	</section>
 	</div>
@@ -101,59 +101,59 @@
 	<section class="swsh-section-options">
 	
 		<div class="tab">
-			<button class="tablinks" id="defaultOpen" data-swsh-tab-for="RNG">RNG Info</button>
-			<button class="tablinks" data-swsh-tab-for="Options">Options</button>
-			<button class="tablinks" data-swsh-tab-for="Filter">Filter</button>
+			<button class="tablinks" id="defaultOpen" data-swsh-tab-for="RNG">RNG 信息</button>
+			<button class="tablinks" data-swsh-tab-for="Options">选项</button>
+			<button class="tablinks" data-swsh-tab-for="Filter">筛选</button>
 		</div>
 		
 		<div id="RNG" class="tabcontent">
 
 		<div class="swsh-control">
-			<label for="inputseed0">State[0]:</label>
-			<input id="inputseed0" placeholder="Input State[0]">
+			<label for="inputseed0">状态[0]：</label>
+			<input id="inputseed0" placeholder="输入状态[0]">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="inputseed1">State[1]:</label>
-			<input id="inputseed1" placeholder="Input State[1]">
+			<label for="inputseed1">状态[1]：</label>
+			<input id="inputseed1" placeholder="输入状态[1]">
 		</div>
 
 		<div class="swsh-control">
-			<label for="initadv">Initial Advance:</label>
-			<input id="initadv" type="number" placeholder="Input Initial Advance">
+			<label for="initadv">初始帧数：</label>
+			<input id="initadv" type="number" placeholder="输入初始帧数">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="finaladv">Max Advance:</label>
-			<input id="finaladv" type="number" placeholder="Input Max Advance">
+			<label for="finaladv">最大帧数：</label>
+			<input id="finaladv" type="number" placeholder="输入最大帧数">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="tid">TID:</label>
-			<input id="tid" type="number" placeholder="Input TID">
+			<label for="tid">TID：</label>
+			<input id="tid" type="number" placeholder="输入 TID">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="sid">SID:</label>
-			<input id="sid" type="number" placeholder="Input SID">
+			<label for="sid">SID：</label>
+			<input id="sid" type="number" placeholder="输入 SID">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="shiny_charm">Shiny Charm?</label>
+			<label for="shiny_charm">闪耀护符？</label>
 			<input type="checkbox" id="shiny_charm">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="mark_charm">Mark Charm?</label>
+			<label for="mark_charm">证明护符？</label>
 			<input type="checkbox" id="mark_charm">
 		</div>
 		
 		<div class="swsh-control">
-			<label for="cute_charm">Cute Charm:</label>
+			<label for="cute_charm">迷人之躯：</label>
 			<select id="cute_charm">
-				<option value="None">None</option>
-				<option value="0">Cute Charm Female</option>
-				<option value="1">Cute Charm Male</option>
+				<option value="None">不启用</option>
+				<option value="0">迷人之躯（雌性）</option>
+				<option value="1">迷人之躯（雄性）</option>
 			</select>
 		</div>
 
@@ -163,124 +163,124 @@
 		<div id="Options" class="tabcontent">
 		
 			<div class="swsh-control">
-				<label for="version">Game Version:</label>
+				<label for="version">游戏版本：</label>
 				<select id="version">
-					<option value="Sword">Sword</option>
-					<option value="Shield">Shield</option>
+					<option value="Sword">剑</option>
+					<option value="Shield">盾</option>
 				</select>
 			</div> 
 			
 			<div class="swsh-control">
-				<label for="type">Type of Encounter:</label>
+				<label for="type">遭遇类型：</label>
 				<select id="type">
-					<option value="Static">Static</option>
-					<option value="Symbol">Spawn</option>
-					<option value="Hidden">Hidden</option>
+					<option value="Static">定点</option>
+					<option value="Symbol">明雷</option>
+					<option value="Hidden">暗雷</option>
 				</select>
 			</div> 
 			
 			<div class="swsh-control">
-				<label for="location">Select Location:</label>
+				<label for="location">选择地点：</label>
 				<select id="location">
-					<option value="">Location:</option>
+					<option value="">地点：</option>
 				</select>
 			</div>
 			
 			<div class="swsh-control">
-				<label for="weather">Select Weather:</label>
+				<label for="weather">选择天气：</label>
 				<select id="weather">
-					<option value="">Weather:</option>
+					<option value="">天气：</option>
 				</select>
 			</div>
 			
 			<div class="swsh-control">
-				<label for="species">Select Species:</label>
+				<label for="species">选择宝可梦：</label>
 				<select id="species">
-					<option value="">Species:</option>
+					<option value="">宝可梦：</option>
 				</select>
 			</div>
 			
 			<div class="swsh-control">
-				<label for="kos">KOs:</label>
+				<label for="kos">击败数：</label>
 				<input id="kos">
 			</div>
 			
 			<!--<div class="swsh-control">
-				<label for="setgender">Set Gender?</label>
+				<label for="setgender">固定性别？</label>
 				<input id="setgender" type="checkbox">
 			</div>-->
 			
 			<div class="swsh-control">
-				<label for="weatheractive">Weather Active?</label>
+				<label for="weatheractive">天气生效中？</label>
 				<input id="weatheractive" type="checkbox">
 			</div>
 			
 			<div class="swsh-control">
-				<label for="minslot">Min Slot:</label>
+				<label for="minslot">最小槽位：</label>
 				<input id="minslot">
-				<label for="maxslot">Max Slot:</label>
+				<label for="maxslot">最大槽位：</label>
 				<input id="maxslot">
 			</div>
 			
 			<div class="swsh-control">
-				<label for="minlevel">Min Level:</label>
+				<label for="minlevel">最低等级：</label>
 				<input id="minlevel">
-				<label for="maxlevel">Max Level:</label>
+				<label for="maxlevel">最高等级：</label>
 				<input id="maxlevel">
 			</div>
 			
 			<div class="swsh-control">
-				<label for="emcount">Egg Move Count:</label>
+				<label for="emcount">蛋招式数量：</label>
 				<input id="emcount" type="number">
 			</div>
 			
 			<div class="swsh-control">
-				<label for="helditem">Rand Held Item?</label>
+				<label for="helditem">随机携带道具？</label>
 				<input id="helditem" type="checkbox">
 			</div>
 			
 			<div class="swsh-control">
-				<label for="flawlessivs">Flawless IVs:</label>
+				<label for="flawlessivs">保底满个体数：</label>
 				<input id="flawlessivs">
 			</div>
 			
 			<div class="swsh-control">
-				<label for="shinylock">Shiny Locked?</label>
+				<label for="shinylock">锁定闪光？</label>
 				<input id="shinylock" type="checkbox">
 			</div>
 		</div>
 		
 		<div id="Filter" class="tabcontent">
 		
-		<label>Min IVs:</label>
+		<label>最小个体值：</label>
 			<div class="pla-control-spaced">
-				<input type="number" id="minhp" placeholder="HP" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minatk" placeholder="ATK" size="2" min="0" max="31" class="ivbox"> <input type="number" id="mindef" placeholder="DEF" size="2" min="0" max="31" class="ivbox"><input type="number" id="minspa" placeholder="SpA" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minspd" placeholder="SpD" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minspe" placeholder="Spe" size="2" min="0" max="31" class="ivbox">
+				<input type="number" id="minhp" placeholder="HP" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minatk" placeholder="攻击" size="2" min="0" max="31" class="ivbox"> <input type="number" id="mindef" placeholder="防御" size="2" min="0" max="31" class="ivbox"><input type="number" id="minspa" placeholder="特攻" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minspd" placeholder="特防" size="2" min="0" max="31" class="ivbox"> <input type="number" id="minspe" placeholder="速度" size="2" min="0" max="31" class="ivbox">
 			</div>
 
-			<label>Max IVs:</label>
+			<label>最大个体值：</label>
 			<div class="pla-control-spaced">
-				<input type="number" id="maxhp" placeholder="HP" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxatk" placeholder="ATK" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxdef" placeholder="DEF" size="2" min="0" max="31" class="ivbox"><input type="number" id="maxspa" placeholder="SpA" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxspd" placeholder="SpD" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxspe" placeholder="Spe" size="2" min="0" max="31" class="ivbox">
+				<input type="number" id="maxhp" placeholder="HP" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxatk" placeholder="攻击" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxdef" placeholder="防御" size="2" min="0" max="31" class="ivbox"><input type="number" id="maxspa" placeholder="特攻" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxspd" placeholder="特防" size="2" min="0" max="31" class="ivbox"> <input type="number" id="maxspe" placeholder="速度" size="2" min="0" max="31" class="ivbox">
 			</div>
 			
 			<div class="pla-options">
-				<label for="brillfilter">Brilliant Filter?</label>
+				<label for="brillfilter">仅耀眼个体？</label>
 				<input id="brillfilter" type="checkbox">
 			</div>
 			
 			<div class="pla-options">
-				<label for="shinyfilter">Shiny Filter:</label>
+				<label for="shinyfilter">闪光筛选：</label>
 				<select id="shinyfilter">
-					<option value="None">None</option>
-					<option value="Star">Star</option>
-					<option value="Square">Square</option>
-					<option value="Star/Square">Star/Square</option>
+					<option value="None">不筛选</option>
+					<option value="Star">星闪</option>
+					<option value="Square">方块闪</option>
+					<option value="Star/Square">星闪/方块闪</option>
 				</select>
 			</div>
 			
 		</div>
 			
 			<div class="swsh-control-actions">
-				<button class="swsh-button swsh-button-action" id="swsh-button-checkow">Check Overworld Seed</button>
+				<button class="swsh-button swsh-button-action" id="swsh-button-checkow">检查大地图种子</button>
 			</div>
 		</div>
 	</section>
@@ -288,84 +288,84 @@
 	<section>
         
         <div class="pla-control">
-			<label for="naturefilter">Filter Results: Nature:</label>
+			<label for="naturefilter">结果筛选：性格</label>
 			<select id="naturefilter" class="chosen-select" multiple>
-				<option value="any">Any</option>
-				<option value="hardy">Hardy</option>
-				<option value="lonely">Lonely</option>
-				<option value="brave">Brave</option>
-				<option value="adamant">Adamant</option>
-				<option value="naughty">Naughty</option>
-				<option value="bold">Bold</option>
-				<option value="docile">Docile</option>
-				<option value="relaxed">Relaxed</option>
-				<option value="impish">Impish</option>
-				<option value="lax">Lax</option>
-				<option value="timid">Timid</option>
-				<option value="hasty">Hasty</option>
-				<option value="serious">Serious</option>
-				<option value="jolly">Jolly</option>
-				<option value="naive">Naive</option>
-				<option value="modest">Modest</option>
-				<option value="mild">Mild</option>
-				<option value="quiet">Quiet</option>
-				<option value="bashful">Bashful</option>
-				<option value="rash">Rash</option>
-				<option value="calm">Calm</option>
-				<option value="gentle">Gentle</option>
-				<option value="sassy">Sassy</option>
-				<option value="careful">Careful</option>
-				<option value="quirky">Quirky</option>
+				<option value="any">任意</option>
+				<option value="hardy">勤奋</option>
+				<option value="lonely">怕寂寞</option>
+				<option value="brave">勇敢</option>
+				<option value="adamant">固执</option>
+				<option value="naughty">顽皮</option>
+				<option value="bold">大胆</option>
+				<option value="docile">坦率</option>
+				<option value="relaxed">悠闲</option>
+				<option value="impish">淘气</option>
+				<option value="lax">乐天</option>
+				<option value="timid">胆小</option>
+				<option value="hasty">急躁</option>
+				<option value="serious">认真</option>
+				<option value="jolly">爽朗</option>
+				<option value="naive">天真</option>
+				<option value="modest">内敛</option>
+				<option value="mild">慢吞吞</option>
+				<option value="quiet">冷静</option>
+				<option value="bashful">害羞</option>
+				<option value="rash">马虎</option>
+				<option value="calm">温和</option>
+				<option value="gentle">温顺</option>
+				<option value="sassy">自大</option>
+				<option value="careful">慎重</option>
+				<option value="quirky">浮躁</option>
 			</select>
 		</div>
 		<div class="pla-control">
-			<label for="markfilter">Filter Results: Mark:</label>
+			<label for="markfilter">结果筛选：证明</label>
 			<select id="markfilter" class="chosen-select" multiple>
-				<option value="any">No Filter</option>
-				<option value="AnyMark">Any Mark</option>
-				<optgroup label="Personality Marks">
-				<option value="AnyPersonality">Any Personality</option>
-				<option value="Rowdy">Rowdy</option>
-				<option value="AbsentMinded">Absent Minded</option>
-				<option value="Jittery">Jittery</option>
-				<option value="Excited">Excited</option>
-				<option value="Charismatic">Charismatic</option>
-				<option value="Calmness">Calmness</option>
-				<option value="Intense">Intense</option>
-				<option value="ZonedOut">Zoned Out</option>
-				<option value="Joyful">Joyful</option>
-				<option value="Angry">Angry</option>
-				<option value="Smiley">Smiley</option>
-				<option value="Teary">Teary</option>
-				<option value="Upbeat">Upbeat</option>
-				<option value="Peeved">Peeved</option>
-				<option value="Intellectual">Intellectual</option>
-				<option value="Ferocious">Ferocious</option>
-				<option value="Crafty">Crafty</option>
-				<option value="Scowling">Scowling</option>
-				<option value="Kindly">Kindly</option>
-				<option value="Flustered">Flustered</option>
-				<option value="PumpedUp">Pumped Up</option>
-				<option value="ZeroEnergy">Zero Energy</option>
-				<option value="Prideful">Prideful</option>
-				<option value="Unsure">Unsure</option>
-				<option value="Humble">Humble</option>
-				<option value="Thorny">Thorny</option>
-				<option value="Vigor">Vigor</option>
-				<option value="Slump">Slump</option>
+				<option value="any">不筛选</option>
+				<option value="AnyMark">任意证明</option>
+				<optgroup label="性格证明">
+				<option value="AnyPersonality">任意性格证明</option>
+				<option value="Rowdy">粗暴之证</option>
+				<option value="AbsentMinded">走神之证</option>
+				<option value="Jittery">紧张之证</option>
+				<option value="Excited">兴奋之证</option>
+				<option value="Charismatic">魅力之证</option>
+				<option value="Calmness">平静之证</option>
+				<option value="Intense">凶猛之证</option>
+				<option value="ZonedOut">发呆之证</option>
+				<option value="Joyful">快乐之证</option>
+				<option value="Angry">愤怒之证</option>
+				<option value="Smiley">微笑之证</option>
+				<option value="Teary">泪眼之证</option>
+				<option value="Upbeat">欢快之证</option>
+				<option value="Peeved">别扭之证</option>
+				<option value="Intellectual">智慧之证</option>
+				<option value="Ferocious">凶暴之证</option>
+				<option value="Crafty">狡猾之证</option>
+				<option value="Scowling">不悦之证</option>
+				<option value="Kindly">温柔之证</option>
+				<option value="Flustered">慌张之证</option>
+				<option value="PumpedUp">激动之证</option>
+				<option value="ZeroEnergy">无气力之证</option>
+				<option value="Prideful">高傲之证</option>
+				<option value="Unsure">不安之证</option>
+				<option value="Humble">谦虚之证</option>
+				<option value="Thorny">尖刺之证</option>
+				<option value="Vigor">活力之证</option>
+				<option value="Slump">低迷之证</option>
 				</optgroup>
-				<option value="Time">Time</option>
-				<option value="Weather">Weather</option>
-				<option value="Uncommon">Uncommon</option>
-				<option value="Rare">Rare</option>
+				<option value="Time">时间之证</option>
+				<option value="Weather">天气之证</option>
+				<option value="Uncommon">不常见之证</option>
+				<option value="Rare">稀有之证</option>
 			</select>
 		</div>
 		
-		<label for="genderfilter">Filter Results: Gender:</label>
+		<label for="genderfilter">结果筛选：性别</label>
 		<select id="genderfilter">
-			<option value=50>Any</option>
-			<option value=0>Male</option>
-			<option value=1>Female</option>
+			<option value=50>任意</option>
+			<option value=0>雄性</option>
+			<option value=1>雌性</option>
 		</select>
 		
 		
@@ -384,32 +384,32 @@
             </ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Shiny:</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
-				<li><span class="pla-results-label">Brilliant:</span> <span data-pla-results-brill></span></li>
-				<li><span class="pla-results-label">Mark:</span> <span data-pla-results-mark></span></li>
+                <li><span class="pla-results-label">闪光：</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
+				<li><span class="pla-results-label">耀眼：</span> <span data-pla-results-brill></span></li>
+				<li><span class="pla-results-label">证明：</span> <span data-pla-results-mark></span></li>
 			</ul>
             
 			<ul class="pla-results-ul">
-				<li><span class="pla-results-label">Advances:</span> <span data-pla-results-adv></span></li>
+				<li><span class="pla-results-label">帧数：</span> <span data-pla-results-adv></span></li>
 			</ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Nature:</span> <span data-pla-results-nature></span></li>
-                <li><span class="pla-results-label">Gender:</span> <span data-pla-results-gender></span></li>
+                <li><span class="pla-results-label">性格：</span> <span data-pla-results-nature></span></li>
+                <li><span class="pla-results-label">性别：</span> <span data-pla-results-gender></span></li>
             </ul>
 			
 			<ul class="pla-results-ul">
-                <li><span class="pla-results-label">Ability:</span> <span data-pla-results-ability></span></li>
-				<li><span class="pla-results-label">Egg Move:</span> <span data-pla-results-egg></span></li>
+                <li><span class="pla-results-label">特性：</span> <span data-pla-results-ability></span></li>
+				<li><span class="pla-results-label">蛋招式：</span> <span data-pla-results-egg></span></li>
 			</ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">PID:</span> <span data-pla-results-pid></span></li>
-				<li><span class="pla-results-label">EC:</span> <span data-pla-results-ec></span></li>
+                <li><span class="pla-results-label">PID：</span> <span data-pla-results-pid></span></li>
+				<li><span class="pla-results-label">EC：</span> <span data-pla-results-ec></span></li>
             </ul>
 
             <div class="pla-results-ivs-container">
-                <span class="pla-results-label">IVs:</span>
+                <span class="pla-results-label">个体值：</span>
                 <ul class="pla-results-ivs">
                     <li class="pla-results-ivs-hp" data-pla-results-ivs-hp></li>
                     <li class="pla-results-ivs-att" data-pla-results-ivs-att></li>

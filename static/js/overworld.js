@@ -22,6 +22,47 @@ import {
   setupIVBox,
   setivVal,
 } from "./modules/common.mjs";
+import { zhSpecies, zhNature } from "./modules/zh-names.mjs";
+
+// 天气中文对照（选项的值仍使用英文，方便后端识别）
+const WEATHER_ZH = {
+  "All Weather": "所有天气",
+  "Normal Weather": "普通天气",
+  "Intense Sun": "强烈日照",
+  "Overcast": "阴天",
+  "Raining": "下雨",
+  "Thunderstorm": "雷雨",
+  "Snowing": "下雪",
+  "Snowstorm": "暴风雪",
+  "Sandstorm": "沙尘",
+  "Heavy Fog": "浓雾",
+  "Fishing": "钓鱼",
+  "Shaking Trees": "摇树",
+};
+
+function zhWeather(w) {
+  if (typeof w !== "string") return w;
+  return WEATHER_ZH[w.trim()] || w.trim();
+}
+
+// 证明（Mark）名称
+const MARK_ZH = {
+  Rowdy: "粗暴", AbsentMinded: "走神", Jittery: "紧张", Excited: "兴奋",
+  Charismatic: "魅力", Calmness: "平静", Intense: "凶猛", ZonedOut: "发呆",
+  Joyful: "快乐", Angry: "愤怒", Smiley: "微笑", Teary: "泪眼",
+  Upbeat: "欢快", Peeved: "别扭", Intellectual: "智慧", Ferocious: "凶暴",
+  Crafty: "狡猾", Scowling: "不悦", Kindly: "温柔", Flustered: "慌张",
+  PumpedUp: "激动", ZeroEnergy: "无气力", Prideful: "高傲", Unsure: "不安",
+  Humble: "谦虚", Thorny: "尖刺", Vigor: "活力", Slump: "低迷",
+  Time: "时间", Weather: "天气", Uncommon: "不常见", Rare: "稀有",
+};
+
+function zhMark(mark) {
+  if (typeof mark !== "string") return mark;
+  if (mark === "None") return "无";
+  const key = mark.replace(/ Mark$/, "");
+  return MARK_ZH[key] ? MARK_ZH[key] + "之证" : mark;
+}
 
 const resultTemplate = document.querySelector("[data-pla-results-template]");
 const resultsArea = document.querySelector("[data-swsh-results]");
@@ -137,7 +178,7 @@ const personalityMarks = ["Rowdy","AbsentMinded","Jittery","Excited","Charismati
 
 $(function() {
 	$(".chosen-select").chosen({
-		no_results_text: "Oops, nothing found!",
+		no_results_text: "没有找到匹配项！",
 		inherit_select_classes: true
 	});
 	
@@ -434,9 +475,9 @@ function populateLocation() {
     .then((res) => {
 		console.log(res)
 		var html_code = '';
-		var weather_code = '<option value="">Select Weather</option>';
-		var species_code = '<option value="">Select Species</option>';
-		html_code += '<option value="">Select Location:</option>';
+		var weather_code = '<option value="">选择天气</option>';
+		var species_code = '<option value="">选择宝可梦</option>';
+		html_code += '<option value="">选择地点：</option>';
 		res.results.forEach((loc) => {
 			html_code += '<option value="' + loc + '">' + loc + '</option>';
 		});
@@ -469,10 +510,10 @@ function populateWeather() {
     .then((response) => response.json())
     .then((res) => {
 		var html_code = '';
-		var species_code = '<option value="">Select Species</option>';
-		html_code += '<option value="">Select Weather:</option>';
+		var species_code = '<option value="">选择宝可梦</option>';
+		html_code += '<option value="">选择天气：</option>';
 		res.results.forEach((wea) => {
-			html_code += '<option value="' + wea + '">' + wea + '</option>';
+			html_code += '<option value="' + wea + '">' + zhWeather(wea) + '</option>';
 		});
 		encWeather.innerHTML = html_code;
 		encSpecies.innerHTML = species_code;
@@ -490,9 +531,9 @@ function populateSpecies() {
     .then((response) => response.json())
     .then((res) => {
 		var html_code = '';
-		html_code += '<option value="">Select Species:</option>';
+		html_code += '<option value="">选择宝可梦：</option>';
 		res.results.forEach((loc) => {
-			html_code += '<option value="' + loc + '">' + loc + '</option>';
+			html_code += '<option value="' + loc + '">' + zhSpecies(loc) + '</option>';
 		});
 		encSpecies.innerHTML = html_code;
 		
@@ -588,7 +629,7 @@ function showFilteredResults() {
   
   if (filteredResults.length > 0) {
     resultsArea.innerHTML =
-      "<section><h3>D = Despawn. Despawn Multiple Pokemon by either Multibattles (for aggressive) or Scaring (for skittish) pokemon.</h3></section>";
+      "<section><h3>D = 消失。可以通过群战（性格强势的宝可梦）或惊吓（性格胆小的宝可梦）让多只宝可梦同时消失。</h3></section>";
     filteredResults.forEach((result) => showResult(result));
   } else {
     showNoResultsFoundSWSH();
@@ -604,17 +645,17 @@ function showResult(result) {
   resultContainer.querySelector(".pla-results-sprite").appendChild(sprite);
   
   resultContainer.querySelector("[data-pla-results-species]").innerHTML =
-    result.species;
+    zhSpecies(result.species);
 	
   resultContainer.querySelector("[data-pla-results-mark]").textContent =
-	result.mark;
+	zhMark(result.mark);
 
   let brilliant = "";
   if(result.brilliant){
-	  brilliant = "Brilliant!"
+	  brilliant = "耀眼！"
   }
   else{
-	  brilliant = "Not Brilliant";
+	  brilliant = "非耀眼";
   }
   let resultBrilliant = resultContainer.querySelector("[data-pla-results-brill]");
   
@@ -635,13 +676,13 @@ function showResult(result) {
 	
   if (result.square) {
 	  sparklesprite.src = "static/img/square.png";
-	  sparkle = "Square Shiny!";
+	  sparkle = "方块闪光！";
   }
   else if (result.shiny) {
     sparklesprite.src = "static/img/shiny.png";
-    sparkle = "Shiny!";
+    sparkle = "闪光！";
   } else {
-    sparkle = "Not Shiny";
+    sparkle = "非闪光";
   }
   resultContainer
     .querySelector("[data-pla-results-shinysprite]")
@@ -653,7 +694,7 @@ function showResult(result) {
   resultContainer.querySelector("[data-pla-results-adv]").textContent =
     result.advances;
   resultContainer.querySelector("[data-pla-results-nature]").textContent =
-    result.nature;
+    zhNature(result.nature);
 	
   let gender = 'male';
   if (result.gender == 1){
@@ -664,9 +705,9 @@ function showResult(result) {
   }
   
   const genderStrings = {
-  male: "Male <i class='fa-solid fa-mars' style='color:blue'/>",
-  female: "Female <i class='fa-solid fa-venus' style='color:pink'/>",
-  genderless: "Genderless <i class='fa-solid fa-genderless'/>",
+  male: "雄性 <i class='fa-solid fa-mars' style='color:blue'/>",
+  female: "雌性 <i class='fa-solid fa-venus' style='color:pink'/>",
+  genderless: "无性别 <i class='fa-solid fa-genderless'/>",
   };
 
   resultContainer.querySelector("[data-pla-results-gender]").innerHTML =

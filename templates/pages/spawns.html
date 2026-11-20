@@ -1,22 +1,41 @@
 {% extends "base/base-sidebar.html" %}
 
-{% block title %}Spawn Checker{% endblock %}
+{% block title %}单只生成{% endblock %}
 
 {% block head %}
+	<style>
+		.pla-section-spawnmap .pla-spawnmap-img {
+			display: block;
+			width: 100%;
+			max-width: 900px;
+			height: auto;
+			margin: 8px 0 18px;
+			border-radius: 6px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+		}
+		.pla-section-spawnmap .pla-spawnmap-hint {
+			opacity: 0.75;
+			font-size: 13px;
+			margin: 0 0 12px;
+		}
+		@media (max-width: 720px) {
+			.pla-section-spawnmap .pla-spawnmap-img { max-width: 100%; }
+		}
+	</style>
+	<script type="module" src="{{ url_for('static', filename='js/modules/zh-names.mjs') }}"></script>
 	<script type="text/javascript" src="static/js/jquery.min.mjs"></script>
 	<script>
 	$(document).ready(function(e){
-		console.log("ready!")
-		
+		var zhs = window.zhSpecies || function (s) { return s; };
+
 		function get_species_names(mapname) {
-			console.log(mapname)
 			var html_code = '';
 			$.getJSON('static/resources/speciesbymap.json', function(data) {
-				html_code += '<option value="">Select Species</option>';
+				html_code += '<option value="">选择宝可梦</option>';
 				$.each(data, function(key,value) {
 					if (key == mapname) {
 						$.each(value, function(index, species) {
-						html_code += '<option value="' + species + '">' + species + '</option>';
+						html_code += '<option value="' + species + '">' + zhs(species) + '</option>';
 						});
 					}
 				});
@@ -27,12 +46,12 @@
 		function get_species_spawners(species,mapname) {
 			var html_code = '';
 			$.getJSON('static/resources/' + mapname + '_spawnerbyspecies.json', function(data) {
-				html_code += '<option value="">Select Spawner:</option>';
+				html_code += '<option value="">选择生成点：</option>';
 				$.each(data, function(key,value) {
 					if (key == species){
 						var i = 1;
 						$.each(value, function(index, spawnpoint) {
-							html_code += '<option value="' + spawnpoint + '"> Spawner ' + i + '</option>';
+							html_code += '<option value="' + spawnpoint + '"> 生成点 ' + i + '</option>';
 							i++;
 						});
 					}
@@ -46,7 +65,7 @@
 				if (mapname != '') {
 					get_species_names(mapname);
 				} else {
-					$('#speciesnames').html('<option value="">Select Species</option>');
+					$('#speciesnames').html('<option value="">选择宝可梦</option>');
 				}
 		});
 		
@@ -56,7 +75,7 @@
 				if (speciesname != '') {
 					get_species_spawners(speciesname,mapname);
 				} else {
-					$('#spawnernames').html('<option value="">Select Spawner</option>');
+					$('#spawnernames').html('<option value="">选择生成点</option>');
 				}
 		});
 	});
@@ -67,8 +86,53 @@
 {% block main %}
 	<section class="pla-section-results">
 		<div data-pla-messages></div>
-		<div class="pla-results" data-pla-results>
-			<p class="pla-results-message">This tool was created by Cappy, with help from Anubis, Kurt, Lincoln, Zyro and Santacrab420 for code and other assistance.</p>
+
+		<div class="tab">
+			<button class="tablinks" id="defaultOpen" data-pla-tab-for="Results">结果</button>
+			<button class="tablinks" data-pla-tab-for="Maps">生成点地图</button>
+		</div>
+
+		<div id="Results" class="tabcontent">
+			<div class="pla-results" data-pla-results>
+				<p class="pla-results-message">本工具由 Lovely 打包修改，原作者 Cappy，感谢 Anubis、Kurt、Lincoln、Zyro 与 Santacrab420 提供的代码与其他帮助。</p>
+			</div>
+		</div>
+
+		<div id="Maps" class="tabcontent">
+			<section class="pla-section-spawnmap">
+				<h3>目前已支持的生成点地图：</h3>
+				<p class="pla-spawnmap-hint">点击区域名展开地图，紫点为鬼火收集点位置。</p>
+
+				<button type="button" class="pla-button expandable-control">黑曜原野</button>
+				<div class="expandable">
+					<img class="pla-spawnmap-img" src="{{ url_for('static', filename='img/spawnmap-obsidian.jpg') }}" alt="黑曜原野 生成点地图">
+				</div>
+
+				<button type="button" class="pla-button expandable-control">红莲湿地</button>
+				<div class="expandable">
+					<img class="pla-spawnmap-img" src="{{ url_for('static', filename='img/spawnmap-crimson.jpg') }}" alt="红莲湿地 生成点地图">
+				</div>
+
+				<button type="button" class="pla-button expandable-control">群青海岸</button>
+				<div class="expandable">
+					<img class="pla-spawnmap-img" src="{{ url_for('static', filename='img/spawnmap-cobalt.jpg') }}" alt="群青海岸 生成点地图">
+				</div>
+
+				<button type="button" class="pla-button expandable-control">天冠山麓</button>
+				<div class="expandable">
+					<img class="pla-spawnmap-img" src="{{ url_for('static', filename='img/spawnmap-coronet.jpg') }}" alt="天冠山麓 生成点地图">
+				</div>
+
+				<button type="button" class="pla-button expandable-control">纯白冻土</button>
+				<div class="expandable">
+					<img class="pla-spawnmap-img" src="{{ url_for('static', filename='img/spawnmap-alabaster.jpg') }}" alt="纯白冻土 生成点地图">
+				</div>
+
+				<button type="button" class="pla-button expandable-control">祝庆村</button>
+				<div class="expandable">
+					<img class="pla-spawnmap-img" src="{{ url_for('static', filename='img/spawnmap-jubilife.jpg') }}" alt="祝庆村 生成点地图">
+				</div>
+			</section>
 		</div>
 	</section>
 {% endblock %}
@@ -76,88 +140,93 @@
 {% block sidebar %}
 	<section class="pla-section-options">
 		<div class="pla-control">
-			<label for="inputseed">Seed</label>
-			<input type="number" id="inputseed" placeholder="Input Seed">
+			<label for="inputseed">种子</label>
+			<div class="pla-seed-row">
+				<button type="button" class="pla-button pla-seed-import"
+				        data-import-seed
+				        title="从 pokeldn 插件 junli-pla-mmo-seed 的 latest_seed.txt 读取最新种子">导入</button>
+				<input type="number" id="inputseed" placeholder="输入种子">
+			</div>
 		</div>
 
 		<div class="pla-control">
-			<label for="rolls">Shiny Rolls</label>
+			<label for="rolls">闪光判定次数</label>
 			<select id="rolls">
-				<option value="1">Default</option>
-				<option value="2">Dex Research 10</option>
-				<option value="4">Dex Research Perfect</option>
-				<option value="5">Shiny Charm</option>
-				<option value="7">Shiny Charm + Perfect</option>
+				<option value="1">默认</option>
+				<option value="2">图鉴研究 10</option>
+				<option value="4">图鉴研究完美</option>
+				<option value="5">闪耀护符</option>
+				<option value="7">闪耀护符 + 完美</option>
 			</select>
 		</div>
 
 		<div class="pla-control-spaced">
-			<label for="staticalpha">Static Alpha?</label>
+			<label for="staticalpha">固定头目？</label>
 			<input type="checkbox" id="staticalpha">
 		</div>
 
 		<div class="pla-control-spaced">
-			<label for="gendercheck">Spawn is Fixed Gender/Genderless?</label>
+			<label for="gendercheck">该生成点性别固定 / 无性别？</label>
 			<input type="checkbox" id="gendercheck">
 		</div>
 
 		<div class="pla-control">
-			<label for="gender">Gender Ratio</label>
+			<label for="gender">性别比例</label>
 			<select id="gender">
 				<option value="31">1 &#9792; : 7 &#9794;</option>
 				<option value="63">1 &#9792; : 4 &#9794;</option>
 				<option value="127">1 &#9792; : 1 &#9794;</option>
 				<option value="191">3 &#9792; : 1 &#9794;</option>
-				<option value="0"> &#9794; Only</option>
-				<option value="254"> &#9792; Only</option>
-				<option value="-1"> Genderless</option>
+				<option value="0"> 仅 &#9794;</option>
+				<option value="254"> 仅 &#9792;</option>
+				<option value="-1"> 无性别</option>
 			</select>
 		</div>
 
 		<div class="pla-control-actions">
-			<button class="pla-button pla-button-action" id="pla-button-checkalphaadv">Find Alpha Shiny Advances</button>
+			<button class="pla-button pla-button-action" id="pla-button-checkalphaadv">查找闪光帧数</button>
 		</div>
 	</section>
 
 	<section class="pla-section-expandable">
-		<button type="button" class="pla-button expandable-control">Advanced Options</button>
+		<button type="button" class="pla-button expandable-control">高级选项</button>
 		
 		<div class="expandable">
 			<div class="pla-control">
-				<label for="speciesmap">Map:</label>
+				<label for="speciesmap">地图：</label>
 				<select name="speciesmap" id="speciesmap" class="form-control">
-					<option value="">Select Map...</option>
-					<option value="AlabasterIcelands">Alabaster Icelands</option>
-					<option value="CoronetHighlands">Coronet Highlands</option>
-					<option value="CobaltCoastlands">Cobalt Coastlands</option>
-					<option value="CrimsonMirelands">Crimson Mirelands</option>
-					<option value="ObsidianFieldlands">Obsidian Fieldlands</option>
+					<option value="">选择地图...</option>
+					<option value="AlabasterIcelands">纯白冻土</option>
+					<option value="CoronetHighlands">天冠山麓</option>
+					<option value="CobaltCoastlands">群青海岸</option>
+					<option value="CrimsonMirelands">红莲湿地</option>
+					<option value="ObsidianFieldlands">黑曜原野</option>
 				</select>
 			</div>
 
 			<div class="pla-control">
-				<label for="speciesnames">Species:</label>
+				<label for="speciesnames">宝可梦：</label>
 				<select name="speciesnames" id="speciesnames" class="form-control">
-					<option value="">Select Pokemon</option>
+					<option value="">选择宝可梦</option>
 				</select>
 			</div>
 			
 			<div class="pla-control">
-				<label for="spawnernames">Species Spawner:</label>
+				<label for="spawnernames">生成点：</label>
 				<select name="spawnernames" id="spawnernames" class="form-control">
-					<option value="">Select Spawner</option>
+					<option value="">选择生成点</option>
 				</select>
 			</div>
 
 			<div class="pla-control-spaced">
-				<label for="daynightcheck">Is Nighttime?</label>
+				<label for="daynightcheck">是否夜间？</label>
 				<input type="checkbox" id="daynightcheck">
 			</div>
 		</div>
 	</section>
 
 	<section class="pla-section-info">
-		<h3>Spawner Pokemon</h3>
+		<h3>生成点宝可梦</h3>
 		<ul class="pla-info-spawner" data-pla-info-spawner>
 		
 		</ul>
@@ -173,22 +242,22 @@
             </ul>
 			
 			<ul class="pla-results-ul">
-				<li><span class="pla-results-label">Shiny:</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
-				<li><span class="pla-results-label">Alpha:</span> <span data-pla-results-alpha></span></li>
+				<li><span class="pla-results-label">闪光：</span> <span class="float -left" data-pla-results-shinysprite><span class="float -right" data-pla-results-shiny></span></span></li>
+				<li><span class="pla-results-label">头目：</span> <span data-pla-results-alpha></span></li>
 			</ul>
 
 			<ul class="pla-results-ul">
-				<li><span class="pla-results-adv">Advances To Shiny:</span> <span data-pla-results-adv></span></li>
+				<li><span class="pla-results-adv">距离闪光还有：</span> <span data-pla-results-adv></span></li>
 			</ul>
 
             <ul class="pla-results-ul">
-                <li><span class="pla-results-label">Nature:</span> <span data-pla-results-nature></span></li>
-                <li><span class="pla-results-label">Gender:</span> <span data-pla-results-gender></span></li>
-				<li><span class="pla-results-label">Rolls:</span> <span data-pla-results-rolls></span></li>
+                <li><span class="pla-results-label">性格：</span> <span data-pla-results-nature></span></li>
+                <li><span class="pla-results-label">性别：</span> <span data-pla-results-gender></span></li>
+				<li><span class="pla-results-label">判定次数：</span> <span data-pla-results-rolls></span></li>
             </ul>
 
             <div class="pla-results-ivs-container">
-                <span class="pla-results-label">IVs:</span>
+                <span class="pla-results-label">个体值：</span>
                 <ul class="pla-results-ivs">
                     <li class="pla-results-ivs-hp" data-pla-results-ivs-hp></li>
                     <li class="pla-results-ivs-att" data-pla-results-ivs-att></li>
@@ -203,5 +272,6 @@
 {% endblock %}
 
 {% block script %}
+	<script type="module" src="{{ url_for('static', filename='js/import-seed.js') }}"></script>
 	<script type="module" src="{{ url_for('static', filename='js/spawns.js') }}"></script>
 {% endblock %}
