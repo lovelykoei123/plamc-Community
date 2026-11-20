@@ -1,5 +1,7 @@
 # RNG 查闪工具 · 中文版源码（v1.1.4）
 
+> 只想下载现成 exe 的话看 [README.md](README.md)；本文件只讲**源码运行**。
+
 本仓库基于开源项目 [pla-multi-checker-web](https://github.com/capitalism-sudo/pla-multi-checker) 汉化并打包修改。
 
 - 本工具由 **Lovely** 打包修改，原作者 **Cappy**
